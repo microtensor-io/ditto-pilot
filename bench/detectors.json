@@ -1,25 +1,48 @@
 {
-  "status": "provisional: replace the compaction rule with the shape facts from step 0 captures before the bench",
+  "status": "from five Claude Code 2.1.159 /compact captures, the same rules as the router fork",
   "note": "The same rules as the router fork's lever table, applied to the shape the relay logs for every call, so both arms count compactions the same way. Shape only, never prompt words.",
   "detectors": [
     {
       "name": "compaction",
       "route_id": "microtensor/ctx_compress",
       "match": {
-        "tools": {"max": 0},
-        "messages": {"min": 2}
+        "max_tokens": {
+          "eq": 20000
+        },
+        "messages": {
+          "min": 3
+        },
+        "final_text_chars": {
+          "min": 2000
+        },
+        "only_system_after_user": {
+          "eq": true
+        }
       }
     },
     {
       "name": "aside",
       "route_id": "microtensor/session_title",
       "match": {
-        "tools": {"max": 0},
-        "tool_choice": {"eq": false},
-        "max_tokens": {"min": 1, "max": 512},
-        "messages": {"eq": 1},
-        "last_user_chars": {"max": 4096},
-        "system_chars": {"max": 4096}
+        "tools": {
+          "max": 0
+        },
+        "tool_choice": {
+          "eq": false
+        },
+        "max_tokens": {
+          "min": 1,
+          "max": 512
+        },
+        "messages": {
+          "eq": 1
+        },
+        "last_user_chars": {
+          "max": 4096
+        },
+        "system_chars": {
+          "max": 4096
+        }
       }
     }
   ]

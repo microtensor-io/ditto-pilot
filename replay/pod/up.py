@@ -1,0 +1,91 @@
+from __future__ import annotations
+
+import base64
+import io
+import json
+import os
+import sys
+import tarfile
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+REST = "https://rest.runpod.io/v1"
+IMAGE = "vllm/vllm-openai@sha256:6ee133356d49ed24cee03dd0cda3d3980279a11c107ce3e752c89e76540f41c9"
+ROOT = Path(__file__).resolve().parents[2]
+SHIPPED = ("relay", "replay", "bench", "catalog.json", "requirements.txt")
+
+
+def pilot_tarball() -> str:
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode="w:gz") as archive:
+        for name in SHIPPED:
+            archive.add(
+                ROOT / name,
+                arcname=name,
+                filter=lambda info: None if "__pycache__" in info.name or info.name.endswith(".pyc") else info,
+            )
+    return base64.b64encode(buffer.getvalue()).decode()
+
+
+def call(method: str, path: str, body: dict | None = None) -> dict:
+    request = urllib.request.Request(
+        REST + path,
+        data=json.dumps(body).encode() if body is not None else None,
+        method=method,
+        headers={
+            "Authorization": f"Bearer {os.environ['RUNPOD_API_KEY']}",
+            "Content-Type": "application/json",
+            "User-Agent": "ditto-pilot-replay/1",
+            "Accept": "application/json",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=120) as response:
+            raw = response.read()
+    except urllib.error.HTTPError as exc:
+        raise SystemExit(f"{path} answered {exc.code}: {exc.read()[:300]!r}") from exc
+    return json.loads(raw) if raw else {}
+
+
+def main() -> int:
+    boot = (ROOT / "replay" / "pod" / "boot.sh").read_bytes()
+    env = {
+        "BOOT_B64": base64.b64encode(boot).decode(),
+        "PILOT_B64": pilot_tarball(),
+        "RAW_REF": os.environ["RAW_REF"],
+        "SUBNET_REF": os.environ["SUBNET_REF"],
+        "MT_LABEL": os.environ.get("MT_LABEL", "loadtest 4090"),
+        "MT_WORKER": "pod",
+        "MT_HOTKEY_MNEMONIC": os.environ["MT_HOTKEY_MNEMONIC"],
+        "MT_COLDKEY_SS58": os.environ["MT_COLDKEY_SS58"],
+        "MT_HOTKEY_SS58": os.environ["MT_HOTKEY_SS58"],
+        "ANTHROPIC_API_KEY": os.environ["ANTHROPIC_API_KEY"],
+        "MICROTENSOR_API_KEY": os.environ["MICROTENSOR_API_KEY"],
+        "VLLM_NO_USAGE_STATS": "1",
+    }
+    print("payload bytes", len(env["PILOT_B64"]) + len(env["BOOT_B64"]), file=sys.stderr)
+    found = call(
+        "POST",
+        "/pods",
+        {
+            "name": "ditto-pilot-replay",
+            "imageName": IMAGE,
+            "gpuTypeIds": ["NVIDIA GeForce RTX 4090"],
+            "gpuCount": 1,
+            "cloudType": os.environ.get("RUNPOD_CLOUD", "SECURE"),
+            "computeType": "GPU",
+            "containerDiskInGb": 80,
+            "volumeInGb": 0,
+            "ports": ["8070/http"],
+            "dockerEntrypoint": ["/bin/bash", "-c"],
+            "dockerStartCmd": ['echo "$BOOT_B64" | base64 -d > /tmp/boot.sh && bash /tmp/boot.sh'],
+            "env": env,
+        },
+    )
+    print(json.dumps({k: found.get(k) for k in ("id", "desiredStatus", "costPerHr")}))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

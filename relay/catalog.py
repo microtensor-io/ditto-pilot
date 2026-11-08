@@ -28,6 +28,9 @@ class Route:
     price_cached_micros_per_mtok: float | None = None
     price_out_micros_per_mtok: float = 0.0
     price_per_request_micros: float = 0.0
+    price_long_above_tokens: int = 0
+    price_long_in_micros_per_mtok: float = 0.0
+    price_long_out_micros_per_mtok: float = 0.0
     extra: dict[str, Any] = field(default_factory=dict)
 
     def cost_micros(self, input_tokens: int, cached_tokens: int, output_tokens: int) -> int:
@@ -36,10 +39,14 @@ class Route:
             if self.price_cached_micros_per_mtok is None
             else self.price_cached_micros_per_mtok
         )
+        prompt = input_tokens + cached_tokens
+        long = bool(self.price_long_above_tokens) and prompt > self.price_long_above_tokens
+        price_in = self.price_long_in_micros_per_mtok if long else self.price_in_micros_per_mtok
+        price_out = self.price_long_out_micros_per_mtok if long else self.price_out_micros_per_mtok
         total = (
-            input_tokens * self.price_in_micros_per_mtok
+            input_tokens * price_in
             + cached_tokens * cached_price
-            + output_tokens * self.price_out_micros_per_mtok
+            + output_tokens * price_out
         ) / 1_000_000 + self.price_per_request_micros
         return round(total)
 
@@ -58,6 +65,9 @@ KNOWN = {
     "price_cached_micros_per_mtok",
     "price_out_micros_per_mtok",
     "price_per_request_micros",
+    "price_long_above_tokens",
+    "price_long_in_micros_per_mtok",
+    "price_long_out_micros_per_mtok",
 }
 
 
@@ -85,6 +95,9 @@ def route_of(route_id: str, raw: dict[str, Any]) -> Route:
         price_cached_micros_per_mtok=None if cached is None else float(cached),
         price_out_micros_per_mtok=float(raw.get("price_out_micros_per_mtok", 0)),
         price_per_request_micros=float(raw.get("price_per_request_micros", 0)),
+        price_long_above_tokens=int(raw.get("price_long_above_tokens", 0)),
+        price_long_in_micros_per_mtok=float(raw.get("price_long_in_micros_per_mtok", 0)),
+        price_long_out_micros_per_mtok=float(raw.get("price_long_out_micros_per_mtok", 0)),
         extra={k: v for k, v in raw.items() if k not in KNOWN},
     )
 

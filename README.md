@@ -4,6 +4,16 @@ Ditto's router sorts every request a coding harness sends (Claude Code, Codex) b
 
 Nothing here needs Ditto's private backend. It builds against Ditto's public router contract (`ditto-subnet/docs/router-compression-competition-v1.md`), so the same lever can later run inside their gateway in shadow mode.
 
+## Replay bench results
+
+Router fork: [microtensor-io/ditto-subnet, branch `microtensor-route-table`](https://github.com/microtensor-io/ditto-subnet/tree/microtensor-route-table/miners/dittobench-router-starter-kit). Every item side by side: the private Hugging Face dataset `microtensor-io/ditto-pilot-results`.
+
+Each of the 36 sessions from Woolford's compaction study replication package (MIT) becomes the compaction request Claude Code sends: the conversation as user, assistant, tool use and tool result turns, then Claude Code's own compaction instruction (`replay/claude_code_compact_instruction.txt`) with `max_tokens` 20000. Each request goes through the router fork three ways: lever off to Claude Haiku 5.5, lever off to Claude Sonnet 5.5, and lever on, which sends compaction to `mt/ctx_compress`. Title requests (Claude Code's title shape, our wording) and three normal turns go through the same way. Summaries are graded with the arena grader used in microtensor-comparisons exp1 and exp2, after Claude Code's numbered summary is mapped back to the nine headings. Cost comes from the relay log at the prices in `catalog.json`; time is measured at the client, request to last byte.
+
+<!-- results:start -->
+Results land here after the run.
+<!-- results:end -->
+
 ## Request types and the Microtensor arena that serves each
 
 | Ditto request type | What Ditto measured | Microtensor route | Serves it now | Next |

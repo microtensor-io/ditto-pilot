@@ -61,7 +61,23 @@ def shape_of(raw: bytes) -> dict[str, Any]:
     messages = body.get("messages") if isinstance(body.get("messages"), list) else []
     last_user = next((m for m in reversed(messages) if isinstance(m, dict) and m.get("role") == "user"), {})
     tools = body.get("tools") if isinstance(body.get("tools"), list) else []
+    after_user = []
+    for message in reversed(messages):
+        if isinstance(message, dict) and message.get("role") == "user":
+            break
+        after_user.append(message)
+    content = last_user.get("content")
+    final = content[-1] if isinstance(content, list) and content else None
+    final_text = (
+        len(content)
+        if isinstance(content, str)
+        else len(str(final.get("text") or ""))
+        if isinstance(final, dict) and final.get("type") == "text"
+        else 0
+    )
     return {
+        "final_text_chars": final_text,
+        "only_system_after_user": all(isinstance(m, dict) and m.get("role") == "system" for m in after_user),
         "tools": len(tools),
         "tool_choice": body.get("tool_choice") is not None,
         "max_tokens": body.get("max_tokens"),
