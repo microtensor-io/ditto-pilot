@@ -23,7 +23,9 @@ def pilot_tarball() -> str:
             archive.add(
                 ROOT / name,
                 arcname=name,
-                filter=lambda info: None if "__pycache__" in info.name or info.name.endswith(".pyc") else info,
+                filter=lambda info: (
+                    None if "__pycache__" in info.name or info.name.endswith(".pyc") else info
+                ),
             )
     return base64.b64encode(buffer.getvalue()).decode()
 

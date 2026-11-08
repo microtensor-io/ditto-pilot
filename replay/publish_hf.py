@@ -32,7 +32,9 @@ def main() -> int:
     parser.add_argument("--repo", default="microtensor-io/ditto-pilot-results")
     args = parser.parse_args()
     folder = Path(args.folder)
-    (folder / "README.md").write_text(CARD, encoding="utf-8")
+    extra = folder / "charts.md"
+    card = CARD + ("\n## Charts\n\n" + extra.read_text(encoding="utf-8") if extra.is_file() else "")
+    (folder / "README.md").write_text(card, encoding="utf-8")
     api = HfApi(token=os.environ["HF_TOKEN"])
     api.create_repo(args.repo, repo_type="dataset", private=True, exist_ok=True)
     api.upload_folder(

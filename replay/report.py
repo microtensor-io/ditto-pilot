@@ -7,6 +7,7 @@ import statistics
 from pathlib import Path
 from typing import Any
 
+from replay import charts
 from replay.grade_prep import CONTESTANTS
 
 ARM_LABELS = {
@@ -213,7 +214,8 @@ def main() -> int:
     (out / "results.json").write_text(
         json.dumps({"compaction": lines, "titles": titles, "turns": turns}, indent=1), encoding="utf-8"
     )
-    rendered = table(lines, titles, turns)
+    drawn = charts.draw(lines, rows_of(Path(args.relay_log)), graded, out / "charts")
+    rendered = table(lines, titles, turns) + "\n\n### Charts\n\n" + charts.markdown(drawn, "results/charts/")
     (out / "table.md").write_text(rendered + "\n", encoding="utf-8")
     readme = Path(args.readme)
     if readme.is_file():
@@ -230,7 +232,12 @@ def main() -> int:
             )
         readme.write_text(text, encoding="utf-8")
     hf = out / "hf"
-    hf.mkdir(parents=True, exist_ok=True)
+    (hf / "charts").mkdir(parents=True, exist_ok=True)
+    for chart in drawn:
+        for suffix in (".png", ".csv"):
+            source = out / "charts" / (chart["name"] + suffix)
+            (hf / "charts" / source.name).write_bytes(source.read_bytes())
+    (hf / "charts.md").write_text(charts.markdown(drawn, "charts/") + "\n", encoding="utf-8")
     by_arm = {arm: {r["item_id"]: r for r in outputs[arm] if r["kind"] == "compaction"} for arm in outputs}
     compaction_rows = []
     for item_id, item in items.items():
