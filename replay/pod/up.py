@@ -11,7 +11,7 @@ import urllib.request
 from pathlib import Path
 
 REST = "https://rest.runpod.io/v1"
-IMAGE = "vllm/vllm-openai@sha256:6ee133356d49ed24cee03dd0cda3d3980279a11c107ce3e752c89e76540f41c9"
+IMAGE = "vllm/vllm-openai:v0.32.0"
 ROOT = Path(__file__).resolve().parents[2]
 SHIPPED = ("relay", "replay", "bench", "catalog.json", "requirements.txt")
 
