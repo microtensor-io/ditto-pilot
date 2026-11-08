@@ -1,0 +1,21 @@
+{
+  "note": "Copy to bench/tasks.json and list 20 coding tasks with hidden tests, each long enough to force at least one compaction. Record the source of every task: Ditto's public router practice pack or Microtensor's own coding sessions.",
+  "tasks": [
+    {
+      "id": "example-slug-window",
+      "source": "example only, replace",
+      "setup": "git clone --depth 1 https://github.com/EXAMPLE/project.git repo",
+      "dir": "repo",
+      "prompt": "Fix wrap_slug_window so consecutive separators collapse to one dash, then run the test suite and make it pass.",
+      "test": "python -m pytest -q tests/hidden"
+    },
+    {
+      "id": "example-ledger-export",
+      "source": "example only, replace",
+      "setup": "git clone --depth 1 https://github.com/EXAMPLE/ledger.git repo",
+      "dir": "repo",
+      "prompt": "The nightly ledger export fails with ChecksumMismatch. Find the cause, fix it and add a regression test.",
+      "test": "python -m pytest -q tests/hidden"
+    }
+  ]
+}
