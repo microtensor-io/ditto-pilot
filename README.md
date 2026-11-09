@@ -70,7 +70,7 @@ Numbers: [session_scores.csv](results/charts/session_scores.csv)
 - The card failed one of three admission probes on the nine headings and was admitted by hand on the operator's word so the run could start.
 - The certified model reached its 3,072 token output limit on 28 of 36 compactions. The gateway's repair step trimmed the repeated text and kept all nine headings, so every Microtensor summary has them, and its recall is lower.
 - Claude Haiku 5.5 used its 20,000 token limit on 17 of 36 compactions, mostly on thinking, and those summaries stop before the end. That is the request Claude Code sends; nothing was changed for Haiku.
-- The arena grader caps a summary at 3,072 tokens. Most complete Haiku and Sonnet summaries are longer and fail on that rule alone. The row "Score without the budget rule" compares the content on equal terms.
+- The arena grader caps a summary at 3,072 tokens. Most of Haiku's summaries go over it (only 16 of 36, 44%, stay within it); Sonnet stays within it 86% of the time (31 of 36). The row "Score without the budget rule" compares the content on equal terms.
 - One session, `exp1-b-07f364d652`, has tool results that arrive a turn late, and Anthropic refused it as first built. The builder now moves each late call next to its result and closes a call left open with Claude Code's interrupted result. All three arms reran that session, and the outputs and relay log hold the rerun.
 - The title route is a stand in: Qwen2.5 1.5B on the pod's CPU, not a certified Microtensor model. Its 44 s is the CPU.
 - Anthropic cost of the run at list price, from the relay log: $14.38.
