@@ -1,0 +1,53 @@
+{
+ "subnet_version": "0.1.0",
+ "probe": {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+  "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+  "file": "qwen2.5-1.5b-instruct-q8_0.gguf"
+ },
+ "probe_image": "ghcr.io/ggml-org/llama.cpp@sha256:43b3988c22c00faae3d04a8f6e3eba41403dff7c5f5952490599f1bcbdc6f3c2",
+ "probe_threads": 4,
+ "probe_command": [
+  "-m",
+  "/model/qwen2.5-1.5b-instruct-q8_0.gguf",
+  "--host",
+  "0.0.0.0",
+  "--port",
+  "8000",
+  "--alias",
+  "slm",
+  "-t",
+  "4",
+  "-tb",
+  "4",
+  "-c",
+  "8192",
+  "-np",
+  "1",
+  "--cache-reuse",
+  "256"
+ ],
+ "tokenizer": "ibm-granite/granite-4.0-h-micro@d5f01a3ea75f088947be3aae039f4ad52837dfde",
+ "grading": {
+  "cuts": [
+   81920,
+   122880
+  ],
+  "headings": [
+   "Primary request and intent",
+   "Key technical concepts",
+   "Files and code sections",
+   "Errors and fixes",
+   "Problem solving",
+   "All user messages",
+   "Pending tasks",
+   "Current work",
+   "Next step"
+  ],
+  "tokenizer": "ibm-granite/granite-4.0-h-micro",
+  "pass_threshold": 0.6,
+  "max_output_share": 0.05,
+  "max_output_tokens": 3072,
+  "min_output_tokens": 1000
+ }
+}

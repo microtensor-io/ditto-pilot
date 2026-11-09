@@ -1,0 +1,4 @@
+model,median_time_s,p95_time_s
+Claude Haiku 5.5,76.5026,86.5746
+Claude Sonnet 5.5,49.5064,69.7845
+Microtensor,39.7066,46.0911

@@ -1,0 +1,8 @@
+request_type,route_id,requests
+compaction,claude-haiku-5-5,36
+compaction,claude-sonnet-5-5,36
+compaction,microtensor/ctx_compress,36
+title,claude-haiku-5-5,36
+title,claude-sonnet-5-5,36
+title,microtensor/session_title,36
+turn,claude-haiku-5-5,3

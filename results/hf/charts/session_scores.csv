@@ -1,0 +1,109 @@
+item_id,model,item_score,passed
+exp1-a-s1-s004,Claude Haiku 5.5,0.0,False
+exp1-b-4f0d38ac56,Claude Haiku 5.5,0.0,False
+exp1-b-006b76a0bd,Claude Haiku 5.5,0.728009,True
+exp1-b-b83b3853fc,Claude Haiku 5.5,0.766196,True
+exp1-b-43ceb7fafd,Claude Haiku 5.5,0.0,False
+exp1-b-07f364d652,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s017,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s006,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s014,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s002,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s003,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s016,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s010,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s007,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s013,Claude Haiku 5.5,0.0,False
+exp1-b-0524f79bcc,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s005,Claude Haiku 5.5,0.0,False
+exp1-b-bb169ee8ea,Claude Haiku 5.5,0.300824,False
+exp1-a-s1-s011,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s012,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s008,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s000,Claude Haiku 5.5,0.0,False
+exp1-b-f783f8f727,Claude Haiku 5.5,0.0,False
+exp1-b-8919a786f0,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s009,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s015,Claude Haiku 5.5,0.0,False
+exp1-b-be809a9c47,Claude Haiku 5.5,0.0,False
+exp1-b-cbc6fdc2b2,Claude Haiku 5.5,0.726064,True
+exp1-a-s1-s001,Claude Haiku 5.5,0.0,False
+exp1-b-41741dcc2b,Claude Haiku 5.5,0.391837,False
+exp1-b-ca8d02f834,Claude Haiku 5.5,0.0,False
+exp1-b-2c6f7071cf,Claude Haiku 5.5,0.0,False
+exp1-b-9bc982a9c0,Claude Haiku 5.5,0.0,False
+exp1-b-9c47a696fb,Claude Haiku 5.5,0.0,False
+exp1-b-9d27998920,Claude Haiku 5.5,0.0,False
+exp1-b-a5ce2d8ed7,Claude Haiku 5.5,0.0,False
+exp1-a-s1-s004,Claude Sonnet 5.5,0.803571,True
+exp1-b-4f0d38ac56,Claude Sonnet 5.5,0.8,True
+exp1-b-006b76a0bd,Claude Sonnet 5.5,0.75,True
+exp1-b-b83b3853fc,Claude Sonnet 5.5,0.719866,True
+exp1-b-43ceb7fafd,Claude Sonnet 5.5,0.697279,True
+exp1-b-07f364d652,Claude Sonnet 5.5,0.693674,True
+exp1-a-s1-s017,Claude Sonnet 5.5,0.689303,True
+exp1-a-s1-s006,Claude Sonnet 5.5,0.679196,True
+exp1-a-s1-s014,Claude Sonnet 5.5,0.675,True
+exp1-a-s1-s002,Claude Sonnet 5.5,0.674089,True
+exp1-a-s1-s003,Claude Sonnet 5.5,0.672009,True
+exp1-a-s1-s016,Claude Sonnet 5.5,0.652941,True
+exp1-a-s1-s010,Claude Sonnet 5.5,0.652244,True
+exp1-a-s1-s007,Claude Sonnet 5.5,0.646853,True
+exp1-a-s1-s013,Claude Sonnet 5.5,0.644832,True
+exp1-b-0524f79bcc,Claude Sonnet 5.5,0.622024,True
+exp1-a-s1-s005,Claude Sonnet 5.5,0.596546,False
+exp1-b-bb169ee8ea,Claude Sonnet 5.5,0.574074,False
+exp1-a-s1-s011,Claude Sonnet 5.5,0.56978,False
+exp1-a-s1-s012,Claude Sonnet 5.5,0.564516,False
+exp1-a-s1-s008,Claude Sonnet 5.5,0.552941,False
+exp1-a-s1-s000,Claude Sonnet 5.5,0.535714,False
+exp1-b-f783f8f727,Claude Sonnet 5.5,0.528846,False
+exp1-b-8919a786f0,Claude Sonnet 5.5,0.517241,False
+exp1-a-s1-s009,Claude Sonnet 5.5,0.514943,False
+exp1-a-s1-s015,Claude Sonnet 5.5,0.510856,False
+exp1-b-be809a9c47,Claude Sonnet 5.5,0.495266,False
+exp1-b-cbc6fdc2b2,Claude Sonnet 5.5,0.466954,False
+exp1-a-s1-s001,Claude Sonnet 5.5,0.454076,False
+exp1-b-41741dcc2b,Claude Sonnet 5.5,0.426136,False
+exp1-b-ca8d02f834,Claude Sonnet 5.5,0.424208,False
+exp1-b-2c6f7071cf,Claude Sonnet 5.5,0.0,False
+exp1-b-9bc982a9c0,Claude Sonnet 5.5,0.0,False
+exp1-b-9c47a696fb,Claude Sonnet 5.5,0.0,False
+exp1-b-9d27998920,Claude Sonnet 5.5,0.0,False
+exp1-b-a5ce2d8ed7,Claude Sonnet 5.5,0.0,False
+exp1-a-s1-s004,Microtensor,0.928571,True
+exp1-b-4f0d38ac56,Microtensor,0.555556,False
+exp1-b-006b76a0bd,Microtensor,0.479167,False
+exp1-b-b83b3853fc,Microtensor,0.5,False
+exp1-b-43ceb7fafd,Microtensor,0.833333,True
+exp1-b-07f364d652,Microtensor,0.761905,True
+exp1-a-s1-s017,Microtensor,0.681891,True
+exp1-a-s1-s006,Microtensor,0.8125,True
+exp1-a-s1-s014,Microtensor,0.6125,True
+exp1-a-s1-s002,Microtensor,0.798077,True
+exp1-a-s1-s003,Microtensor,0.125,False
+exp1-a-s1-s016,Microtensor,0.585973,False
+exp1-a-s1-s010,Microtensor,0.594952,False
+exp1-a-s1-s007,Microtensor,0.125,False
+exp1-a-s1-s013,Microtensor,0.458654,False
+exp1-b-0524f79bcc,Microtensor,0.238095,False
+exp1-a-s1-s005,Microtensor,0.689474,True
+exp1-b-bb169ee8ea,Microtensor,0.365385,False
+exp1-a-s1-s011,Microtensor,0.684783,True
+exp1-a-s1-s012,Microtensor,0.694444,True
+exp1-a-s1-s008,Microtensor,0.258824,False
+exp1-a-s1-s000,Microtensor,0.556818,False
+exp1-b-f783f8f727,Microtensor,0.288462,False
+exp1-b-8919a786f0,Microtensor,0.357143,False
+exp1-a-s1-s009,Microtensor,0.485333,False
+exp1-a-s1-s015,Microtensor,0.125,False
+exp1-b-be809a9c47,Microtensor,0.163462,False
+exp1-b-cbc6fdc2b2,Microtensor,0.125,False
+exp1-a-s1-s001,Microtensor,0.432133,False
+exp1-b-41741dcc2b,Microtensor,0.125,False
+exp1-b-ca8d02f834,Microtensor,0.480769,False
+exp1-b-2c6f7071cf,Microtensor,0.708333,True
+exp1-b-9bc982a9c0,Microtensor,0.416667,False
+exp1-b-9c47a696fb,Microtensor,0.333333,False
+exp1-b-9d27998920,Microtensor,0.166667,False
+exp1-b-a5ce2d8ed7,Microtensor,0.583333,False

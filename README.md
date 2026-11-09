@@ -11,8 +11,70 @@ Router fork: [microtensor-io/ditto-subnet, branch `microtensor-route-table`](htt
 Each of the 36 sessions from Woolford's compaction study replication package (MIT) becomes the compaction request Claude Code sends: the conversation as user, assistant, tool use and tool result turns, then Claude Code's own compaction instruction (`replay/claude_code_compact_instruction.txt`) with `max_tokens` 20000. Each request goes through the router fork three ways: lever off to Claude Haiku 5.5, lever off to Claude Sonnet 5.5, and lever on, which sends compaction to `mt/ctx_compress`. Title requests (Claude Code's title shape, our wording) and three normal turns go through the same way. Summaries are graded with the arena grader used in microtensor-comparisons exp1 and exp2, after Claude Code's numbered summary is mapped back to the nine headings. Cost comes from the relay log at the prices in `catalog.json`; time is measured at the client, request to last byte.
 
 <!-- results:start -->
-Results land here after the run.
+| | Claude Haiku 5.5 (default) | Claude Sonnet 5.5 (default) | Microtensor route table |
+|---|---|---|---|
+| Compactions answered | 36 | 36 | 36 |
+| Passed the arena grader | 3 | 16 | 11 |
+| Pass rate | 8.3% | 44.4% | 30.6% |
+| Kept all 9 headings | 21 | 36 | 36 |
+| Within the arena budget | 16 | 31 | 36 |
+| Recall of key facts | 66.7% | 78.4% | 48.1% |
+| Hallucination | 5.2% | 6.5% | 1.7% |
+| Continuation | 0.46 | 0.52 | 0.49 |
+| Score without the budget rule | 0.35 | 0.61 | 0.48 |
+| Cost per compaction | $0.0849 | $0.3057 | $0.0050 |
+| Median time | 76.5 s | 49.5 s | 39.7 s |
+| p95 time | 86.6 s | 69.8 s | 46.1 s |
+| Errors | 0 | 0 | 0 |
+
+| Titles | Claude Haiku 5.5 (default) | Claude Sonnet 5.5 (default) | Microtensor route table |
+|---|---|---|---|
+| Answered | 36 | 36 | 36 |
+| Valid JSON title | 36 | 36 | 36 |
+| 3 to 7 words | 35 | 36 | 29 |
+| Median time | 0.6 s | 1.1 s | 44.3 s |
+| Cost per title | $0.0000 | $0.0006 | $0.0000 |
+
+Normal turns through the route table: 3 of 3 answered, 3 served by the model they asked for, so the table left them alone.
+
+### Charts
+
+![Cost per compaction, Haiku vs Sonnet vs Microtensor](results/charts/cost_per_compaction.png)
+
+Numbers: [cost_per_compaction.csv](results/charts/cost_per_compaction.csv)
+
+![Quality against cost, one dot per model](results/charts/quality_vs_cost.png)
+
+Numbers: [quality_vs_cost.csv](results/charts/quality_vs_cost.csv)
+
+![Time per compaction, median and p95 per model](results/charts/time_per_compaction.png)
+
+Numbers: [time_per_compaction.csv](results/charts/time_per_compaction.csv)
+
+![Requests by type and the route that served them](results/charts/requests_by_type_and_route.png)
+
+Numbers: [requests_by_type_and_route.csv](results/charts/requests_by_type_and_route.csv)
+
+![Quality by measure per model](results/charts/quality_by_measure.png)
+
+Numbers: [quality_by_measure.csv](results/charts/quality_by_measure.csv)
+
+![Each session's score across the three models](results/charts/session_scores.png)
+
+Numbers: [session_scores.csv](results/charts/session_scores.csv)
 <!-- results:end -->
+
+### Run notes, 2026-11-09
+
+- Microtensor served from one RTX 3090 (24 GB) on a RunPod community host, the only CUDA 13 card free that morning. Its times are 3090 times.
+- The card failed one of three admission probes on the nine headings and was admitted by hand on the operator's word so the run could start.
+- The certified model reached its 3,072 token output limit on 28 of 36 compactions. The gateway's repair step trimmed the repeated text and kept all nine headings, so every Microtensor summary has them, and its recall is lower.
+- Claude Haiku 5.5 used its 20,000 token limit on 17 of 36 compactions, mostly on thinking, and those summaries stop before the end. That is the request Claude Code sends; nothing was changed for Haiku.
+- The arena grader caps a summary at 3,072 tokens. Most complete Haiku and Sonnet summaries are longer and fail on that rule alone. The row "Score without the budget rule" compares the content on equal terms.
+- One session, `exp1-b-07f364d652`, has tool results that arrive a turn late, and Anthropic refused it as first built. The builder now moves each late call next to its result and closes a call left open with Claude Code's interrupted result. All three arms reran that session, and the outputs and relay log hold the rerun.
+- The title route is a stand in: Qwen2.5 1.5B on the pod's CPU, not a certified Microtensor model. Its 44 s is the CPU.
+- Anthropic cost of the run at list price, from the relay log: $14.38.
+- Raw data: `results/outputs/` (every reply), `results/relay.jsonl` (one line per request), `results/graded/` (every grade), `results/run/` (pod and rerun logs).
 
 ## Request types and the Microtensor arena that serves each
 

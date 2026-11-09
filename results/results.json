@@ -1,0 +1,110 @@
+{
+ "compaction": [
+  {
+   "arm": "haiku",
+   "label": "Claude Haiku 5.5 (default)",
+   "requests": 36,
+   "answered": 36,
+   "errors": 0,
+   "graded": 36,
+   "passed": 3,
+   "pass_rate": 0.08333333333333333,
+   "nine_headings": 21,
+   "within_budget": 16,
+   "recall": 0.6672101607924621,
+   "hallucination": 0.05172279501810112,
+   "continuation": 0.4625,
+   "item_score": 0.08091472222222222,
+   "score_without_budget_gate": 0.3523989428124419,
+   "cost_per_compaction_usd": 0.08489658333333333,
+   "median_time_s": 76.5026,
+   "p95_time_s": 86.5746,
+   "output_tokens_mean": 15968.444444444445
+  },
+  {
+   "arm": "sonnet",
+   "label": "Claude Sonnet 5.5 (default)",
+   "requests": 36,
+   "answered": 36,
+   "errors": 0,
+   "graded": 36,
+   "passed": 16,
+   "pass_rate": 0.4444444444444444,
+   "nine_headings": 36,
+   "within_budget": 31,
+   "recall": 0.7836796774490273,
+   "hallucination": 0.06455968488735855,
+   "continuation": 0.5212962962962963,
+   "item_score": 0.5223605,
+   "score_without_budget_gate": 0.6093177328737513,
+   "cost_per_compaction_usd": 0.3056981111111111,
+   "median_time_s": 49.5064,
+   "p95_time_s": 69.7845,
+   "output_tokens_mean": 7295.5
+  },
+  {
+   "arm": "microtensor",
+   "label": "Microtensor route table",
+   "requests": 36,
+   "answered": 36,
+   "errors": 0,
+   "graded": 36,
+   "passed": 11,
+   "pass_rate": 0.3055555555555556,
+   "nine_headings": 36,
+   "within_budget": 36,
+   "recall": 0.4810502773609069,
+   "hallucination": 0.016755610744455137,
+   "continuation": 0.49212962962962964,
+   "item_score": 0.47587602777777777,
+   "score_without_budget_gate": 0.4758759836725103,
+   "cost_per_compaction_usd": 0.005,
+   "median_time_s": 39.7066,
+   "p95_time_s": 46.0911,
+   "output_tokens_mean": 645.0833333333334
+  }
+ ],
+ "titles": [
+  {
+   "arm": "haiku",
+   "requests": 36,
+   "answered": 36,
+   "valid_json_title": 36,
+   "three_to_seven_words": 35,
+   "median_time_s": 0.6467,
+   "cost_per_title_usd": 3.05e-05,
+   "served_by": [
+    "claude-haiku-5-5"
+   ]
+  },
+  {
+   "arm": "sonnet",
+   "requests": 36,
+   "answered": 36,
+   "valid_json_title": 36,
+   "three_to_seven_words": 36,
+   "median_time_s": 1.0744,
+   "cost_per_title_usd": 0.0006110555555555555,
+   "served_by": [
+    "claude-sonnet-5-5"
+   ]
+  },
+  {
+   "arm": "microtensor",
+   "requests": 36,
+   "answered": 36,
+   "valid_json_title": 36,
+   "three_to_seven_words": 29,
+   "median_time_s": 44.331,
+   "cost_per_title_usd": 0.0,
+   "served_by": [
+    "microtensor/session_title"
+   ]
+  }
+ ],
+ "turns": {
+  "requests": 3,
+  "answered": 3,
+  "untouched": 3
+ }
+}

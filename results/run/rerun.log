@@ -1,0 +1,27 @@
+==> 2026-11-09T05:08:54Z replay pod on 3113ffd3238d
+==> gpu check: ok NVIDIA GeForce RTX 3090 1024.0
+==> operator
+26:pip install -q "https://github.com/microtensor-io/microtensor-subnet/archive/${SUBNET_REF}.tar.gz" 2>&1 | tail -3
+compilers: cc=/usr/bin/cc gcc=/usr/bin/gcc git=
+==> pilot code
+==> stand in
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/opt/standin/qwen2.5-1.5b-instruct-q8_0.gguf
+==> router fork
+cc /usr/bin/cc
+   Compiling dittobench-router-starter-kit v0.1.0 (/opt/ditto-subnet/miners/dittobench-router-starter-kit)
+    Finished `release` profile [optimized] target(s) in 14.88s
+==> relay and routers
+port 8081: 200
+port 8082: 200
+port 8090: 200
+port 8100: 200
+==> requests
+{"requests": 75, "compaction": 36, "title": 36, "turn": 3}
+==> waiting for the ctx_compress card
+card serving at 05:12:28
+==> rerun compaction/exp1-b-07f364d652 05:12:28
+microtensor compaction/exp1-b-07f364d652 200 mt/ctx_compress 373 39888.0 
+sonnet compaction/exp1-b-07f364d652 200 claude-sonnet-5-5 6035 40011.1 
+haiku compaction/exp1-b-07f364d652 200 claude-haiku-5-5 8764 42386.7 
+==> done 2026-11-09T05:13:11Z

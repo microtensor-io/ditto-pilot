@@ -2,6 +2,5 @@ __pycache__/
 *.pyc
 logs/
 captures/
-results/
 workspaces/
 .env

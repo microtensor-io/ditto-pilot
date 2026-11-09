@@ -1,0 +1,252 @@
+==> 2026-11-09T04:14:16Z replay pod on 414448399e46
+==> gpu check: ok NVIDIA GeForce RTX 3090 1024.0
+==> operator
+26:pip install -q "https://github.com/microtensor-io/microtensor-subnet/archive/${SUBNET_REF}.tar.gz" 2>&1 | tail -3
+compilers: cc=/usr/bin/cc gcc=/usr/bin/gcc git=
+==> pilot code
+==> stand in
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/opt/standin/qwen2.5-1.5b-instruct-q8_0.gguf
+==> router fork
+cc /usr/bin/cc
+   Compiling dittobench-router-starter-kit v0.1.0 (/opt/ditto-subnet/miners/dittobench-router-starter-kit)
+    Finished `release` profile [optimized] target(s) in 13.38s
+==> relay and routers
+port 8081: 200
+port 8082: 200
+port 8090: 200
+port 8100: 200
+==> requests
+{"requests": 75, "compaction": 36, "title": 36, "turn": 3}
+==> waiting for the ctx_compress card
+card serving at 04:18:04
+==> smoke
+microtensor compaction/exp1-a-s1-s000 200 mt/ctx_compress 483 37885.5 
+sonnet compaction/exp1-a-s1-s000 200 claude-sonnet-5-5 8350 52333.8 
+sonnet title/exp1-a-s1-s000 200 claude-sonnet-5-5 21 1128.6 
+microtensor title/exp1-a-s1-s000 200 microtensor/session_title 0 44605.4 
+haiku compaction/exp1-a-s1-s000 200 claude-haiku-5-5 20000 85084.0 
+haiku title/exp1-a-s1-s000 200 claude-haiku-5-5 21 609.0 
+microtensor turn/exp1-a-s1-s000 200 claude-haiku-5-5 1024 5962.9 
+smoke ok: yes
+==> replay 04:19:33
+microtensor compaction/exp1-a-s1-s000 200 mt/ctx_compress 483 37699.5 
+microtensor title/exp1-a-s1-s000 200 microtensor/session_title 0 603.8 
+microtensor turn/exp1-a-s1-s000 200 claude-haiku-5-5 422 3228.8 
+sonnet compaction/exp1-a-s1-s000 200 claude-sonnet-5-5 8393 53328.4 
+sonnet title/exp1-a-s1-s000 200 claude-sonnet-5-5 21 1151.5 
+microtensor compaction/exp1-a-s1-s001 200 mt/ctx_compress 381 39480.9 
+haiku compaction/exp1-a-s1-s000 200 claude-haiku-5-5 20000 84028.3 
+haiku title/exp1-a-s1-s000 200 claude-haiku-5-5 21 624.0 
+sonnet compaction/exp1-a-s1-s001 200 claude-sonnet-5-5 5852 40644.6 
+sonnet title/exp1-a-s1-s001 200 claude-sonnet-5-5 21 710.1 
+microtensor title/exp1-a-s1-s001 200 microtensor/session_title 0 44509.1 
+microtensor turn/exp1-a-s1-s001 200 claude-haiku-5-5 1024 6220.0 
+haiku compaction/exp1-a-s1-s001 200 claude-haiku-5-5 15288 61572.3 
+haiku title/exp1-a-s1-s001 200 claude-haiku-5-5 21 641.2 
+sonnet compaction/exp1-a-s1-s002 200 claude-sonnet-5-5 10277 69784.5 
+sonnet title/exp1-a-s1-s002 200 claude-sonnet-5-5 23 1125.5 
+microtensor compaction/exp1-a-s1-s002 200 mt/ctx_compress 585 39768.4 
+microtensor title/exp1-a-s1-s002 200 microtensor/session_title 0 44468.4 
+haiku compaction/exp1-a-s1-s002 200 claude-haiku-5-5 17440 70782.2 
+haiku title/exp1-a-s1-s002 200 claude-haiku-5-5 24 821.6 
+microtensor turn/exp1-a-s1-s002 200 claude-haiku-5-5 1024 7374.3 
+sonnet compaction/exp1-a-s1-s003 200 claude-sonnet-5-5 10085 77550.9 
+sonnet title/exp1-a-s1-s003 200 claude-sonnet-5-5 23 1008.3 
+microtensor compaction/exp1-a-s1-s003 200 mt/ctx_compress 222 40722.8 
+sonnet compaction/exp1-a-s1-s004 200 claude-sonnet-5-5 8377 49506.4 
+sonnet title/exp1-a-s1-s004 200 claude-sonnet-5-5 23 823.1 
+haiku compaction/exp1-a-s1-s003 200 claude-haiku-5-5 20000 85952.8 
+haiku title/exp1-a-s1-s003 200 claude-haiku-5-5 25 701.9 
+microtensor title/exp1-a-s1-s003 200 microtensor/session_title 0 44090.6 
+microtensor compaction/exp1-a-s1-s004 200 mt/ctx_compress 1191 20392.1 
+sonnet compaction/exp1-a-s1-s005 200 claude-sonnet-5-5 7619 47701.5 
+sonnet title/exp1-a-s1-s005 200 claude-sonnet-5-5 23 774.1 
+microtensor title/exp1-a-s1-s004 200 microtensor/session_title 0 44331.0 
+haiku compaction/exp1-a-s1-s004 200 claude-haiku-5-5 20000 82977.0 
+haiku title/exp1-a-s1-s004 200 claude-haiku-5-5 23 655.4 
+microtensor compaction/exp1-a-s1-s005 200 mt/ctx_compress 1268 20693.3 
+microtensor title/exp1-a-s1-s005 200 microtensor/session_title 0 773.0 
+sonnet compaction/exp1-a-s1-s006 200 claude-sonnet-5-5 10873 75423.7 
+sonnet title/exp1-a-s1-s006 200 claude-sonnet-5-5 26 1117.5 
+microtensor compaction/exp1-a-s1-s006 200 mt/ctx_compress 524 40611.4 
+haiku compaction/exp1-a-s1-s005 200 claude-haiku-5-5 20000 85077.9 
+haiku title/exp1-a-s1-s005 200 claude-haiku-5-5 23 685.5 
+microtensor title/exp1-a-s1-s006 200 microtensor/session_title 0 44300.9 
+sonnet compaction/exp1-a-s1-s007 200 claude-sonnet-5-5 8894 65038.5 
+sonnet title/exp1-a-s1-s007 200 claude-sonnet-5-5 26 1038.3 
+microtensor compaction/exp1-a-s1-s007 200 mt/ctx_compress 466 39195.3 
+sonnet compaction/exp1-a-s1-s008 200 claude-sonnet-5-5 10549 64676.9 
+sonnet title/exp1-a-s1-s008 200 claude-sonnet-5-5 25 1412.8 
+haiku compaction/exp1-a-s1-s006 200 claude-haiku-5-5 20000 85295.3 
+haiku title/exp1-a-s1-s006 200 claude-haiku-5-5 24 598.1 
+microtensor title/exp1-a-s1-s007 200 microtensor/session_title 0 44829.0 
+sonnet compaction/exp1-a-s1-s009 200 claude-sonnet-5-5 6867 45375.9 
+sonnet title/exp1-a-s1-s009 200 claude-sonnet-5-5 25 1080.6 
+microtensor compaction/exp1-a-s1-s008 200 mt/ctx_compress 407 38858.4 
+haiku compaction/exp1-a-s1-s007 200 claude-haiku-5-5 20000 83797.6 
+haiku title/exp1-a-s1-s007 200 claude-haiku-5-5 24 898.3 
+microtensor title/exp1-a-s1-s008 200 microtensor/session_title 0 44446.6 
+sonnet compaction/exp1-a-s1-s010 200 claude-sonnet-5-5 7805 59190.0 
+sonnet title/exp1-a-s1-s010 200 claude-sonnet-5-5 26 999.6 
+microtensor compaction/exp1-a-s1-s009 200 mt/ctx_compress 754 39042.9 
+sonnet compaction/exp1-a-s1-s011 200 claude-sonnet-5-5 7255 50630.2 
+sonnet title/exp1-a-s1-s011 200 claude-sonnet-5-5 26 1399.5 
+haiku compaction/exp1-a-s1-s008 200 claude-haiku-5-5 20000 80700.9 
+haiku title/exp1-a-s1-s008 200 claude-haiku-5-5 25 700.2 
+microtensor title/exp1-a-s1-s009 200 microtensor/session_title 0 46350.3 
+sonnet compaction/exp1-a-s1-s012 200 claude-sonnet-5-5 7488 54286.2 
+sonnet title/exp1-a-s1-s012 200 claude-sonnet-5-5 21 764.5 
+microtensor compaction/exp1-a-s1-s010 200 mt/ctx_compress 321 39706.6 
+haiku compaction/exp1-a-s1-s009 200 claude-haiku-5-5 20000 85500.5 
+haiku title/exp1-a-s1-s009 200 claude-haiku-5-5 22 597.3 
+microtensor title/exp1-a-s1-s010 200 microtensor/session_title 0 44180.5 
+sonnet compaction/exp1-a-s1-s013 200 claude-sonnet-5-5 8463 54881.9 
+sonnet title/exp1-a-s1-s013 200 claude-sonnet-5-5 22 778.5 
+microtensor compaction/exp1-a-s1-s011 200 mt/ctx_compress 1904 28695.3 
+microtensor title/exp1-a-s1-s011 200 microtensor/session_title 0 723.0 
+microtensor compaction/exp1-a-s1-s012 200 mt/ctx_compress 1524 24705.4 
+sonnet compaction/exp1-a-s1-s014 200 claude-sonnet-5-5 7670 56384.1 
+sonnet title/exp1-a-s1-s014 200 claude-sonnet-5-5 21 802.3 
+haiku compaction/exp1-a-s1-s010 200 claude-haiku-5-5 20000 81605.1 
+haiku title/exp1-a-s1-s010 200 claude-haiku-5-5 26 619.3 
+microtensor title/exp1-a-s1-s012 200 microtensor/session_title 0 43985.2 
+sonnet compaction/exp1-a-s1-s015 200 claude-sonnet-5-5 8173 68021.3 
+sonnet title/exp1-a-s1-s015 200 claude-sonnet-5-5 26 804.6 
+microtensor compaction/exp1-a-s1-s013 200 mt/ctx_compress 390 38408.6 
+haiku compaction/exp1-a-s1-s011 200 claude-haiku-5-5 20000 84473.3 
+haiku title/exp1-a-s1-s011 200 claude-haiku-5-5 26 594.2 
+microtensor title/exp1-a-s1-s013 200 microtensor/session_title 0 44465.7 
+sonnet compaction/exp1-a-s1-s016 200 claude-sonnet-5-5 6777 51144.0 
+sonnet title/exp1-a-s1-s016 200 claude-sonnet-5-5 26 775.5 
+microtensor compaction/exp1-a-s1-s014 200 mt/ctx_compress 725 38330.0 
+haiku compaction/exp1-a-s1-s012 200 claude-haiku-5-5 17269 70836.3 
+haiku title/exp1-a-s1-s012 200 claude-haiku-5-5 21 693.8 
+sonnet compaction/exp1-a-s1-s017 200 claude-sonnet-5-5 7816 56141.4 
+sonnet title/exp1-a-s1-s017 200 claude-sonnet-5-5 26 1198.4 
+microtensor title/exp1-a-s1-s014 200 microtensor/session_title 0 44504.2 
+sonnet compaction/exp1-b-006b76a0bd 200 claude-sonnet-5-5 3946 23508.2 
+sonnet title/exp1-b-006b76a0bd 200 claude-sonnet-5-5 24 1077.3 
+microtensor compaction/exp1-a-s1-s015 200 mt/ctx_compress 250 39744.5 
+sonnet compaction/exp1-b-0524f79bcc 200 claude-sonnet-5-5 7249 46920.6 
+sonnet title/exp1-b-0524f79bcc 200 claude-sonnet-5-5 22 1289.0 
+sonnet compaction/exp1-b-07f364d652 400  0 298.0 {"type":"error","error":{"type":"invalid_request_error","message":"messages.119: `tool_use` ids were found without `tool
+sonnet title/exp1-b-07f364d652 200 claude-sonnet-5-5 17 1099.4 
+haiku compaction/exp1-a-s1-s013 200 claude-haiku-5-5 20000 86574.6 
+haiku title/exp1-a-s1-s013 200 claude-haiku-5-5 24 584.6 
+microtensor title/exp1-a-s1-s015 200 microtensor/session_title 0 44708.2 
+sonnet compaction/exp1-b-2c6f7071cf 200 claude-sonnet-5-5 7064 48359.5 
+sonnet title/exp1-b-2c6f7071cf 200 claude-sonnet-5-5 22 785.0 
+microtensor compaction/exp1-a-s1-s016 200 mt/ctx_compress 1893 28407.8 
+sonnet compaction/exp1-b-41741dcc2b 200 claude-sonnet-5-5 5951 37658.5 
+sonnet title/exp1-b-41741dcc2b 200 claude-sonnet-5-5 19 868.6 
+haiku compaction/exp1-a-s1-s014 200 claude-haiku-5-5 20000 83901.3 
+haiku title/exp1-a-s1-s014 200 claude-haiku-5-5 23 695.9 
+microtensor title/exp1-a-s1-s016 200 microtensor/session_title 0 44316.2 
+sonnet compaction/exp1-b-43ceb7fafd 200 claude-sonnet-5-5 6514 50380.1 
+sonnet title/exp1-b-43ceb7fafd 200 claude-sonnet-5-5 21 1150.5 
+microtensor compaction/exp1-a-s1-s017 200 mt/ctx_compress 662 39361.7 
+haiku compaction/exp1-a-s1-s015 200 claude-haiku-5-5 20000 80900.2 
+haiku title/exp1-a-s1-s015 200 claude-haiku-5-5 24 621.2 
+sonnet compaction/exp1-b-4f0d38ac56 200 claude-sonnet-5-5 6904 43968.1 
+sonnet title/exp1-b-4f0d38ac56 200 claude-sonnet-5-5 21 1100.2 
+microtensor title/exp1-a-s1-s017 200 microtensor/session_title 0 44159.9 
+sonnet compaction/exp1-b-8919a786f0 200 claude-sonnet-5-5 6203 40098.5 
+microtensor compaction/exp1-b-006b76a0bd 200 mt/ctx_compress 352 36330.8 
+sonnet title/exp1-b-8919a786f0 200 claude-sonnet-5-5 21 1215.1 
+haiku compaction/exp1-a-s1-s016 200 claude-haiku-5-5 20000 86779.6 
+haiku title/exp1-a-s1-s016 200 claude-haiku-5-5 19 701.3 
+sonnet compaction/exp1-b-9bc982a9c0 200 claude-sonnet-5-5 6526 42164.5 
+sonnet title/exp1-b-9bc982a9c0 200 claude-sonnet-5-5 19 1074.4 
+microtensor title/exp1-b-006b76a0bd 200 microtensor/session_title 0 44588.8 
+microtensor compaction/exp1-b-0524f79bcc 200 mt/ctx_compress 1066 39743.7 
+sonnet compaction/exp1-b-9c47a696fb 200 claude-sonnet-5-5 8574 62916.8 
+sonnet title/exp1-b-9c47a696fb 200 claude-sonnet-5-5 29 1001.4 
+haiku compaction/exp1-a-s1-s017 200 claude-haiku-5-5 20000 83591.9 
+haiku title/exp1-a-s1-s017 200 claude-haiku-5-5 26 604.2 
+haiku compaction/exp1-b-006b76a0bd 200 claude-haiku-5-5 5139 21895.3 
+haiku title/exp1-b-006b76a0bd 200 claude-haiku-5-5 24 596.0 
+sonnet compaction/exp1-b-9d27998920 200 claude-sonnet-5-5 6181 45696.9 
+sonnet title/exp1-b-9d27998920 200 claude-sonnet-5-5 21 825.6 
+microtensor title/exp1-b-0524f79bcc 200 microtensor/session_title 0 92982.5 
+haiku compaction/exp1-b-0524f79bcc 200 claude-haiku-5-5 15876 64181.3 
+haiku title/exp1-b-0524f79bcc 200 claude-haiku-5-5 29 800.1 
+sonnet compaction/exp1-b-a5ce2d8ed7 200 claude-sonnet-5-5 7418 52967.0 
+haiku compaction/exp1-b-07f364d652 400  0 146.6 {"type":"error","error":{"type":"invalid_request_error","message":"messages.119: `tool_use` ids were found without `tool
+haiku title/exp1-b-07f364d652 200 claude-haiku-5-5 21 634.9 
+sonnet title/exp1-b-a5ce2d8ed7 200 claude-sonnet-5-5 20 731.9 
+microtensor compaction/exp1-b-07f364d652 200 mt/ctx_compress 373 41392.0 
+sonnet compaction/exp1-b-b83b3853fc 200 claude-sonnet-5-5 5726 36193.7 
+sonnet title/exp1-b-b83b3853fc 200 claude-sonnet-5-5 25 768.7 
+microtensor title/exp1-b-07f364d652 200 microtensor/session_title 0 44114.3 
+haiku compaction/exp1-b-2c6f7071cf 200 claude-haiku-5-5 15946 67709.5 
+haiku title/exp1-b-2c6f7071cf 200 claude-haiku-5-5 22 609.2 
+sonnet compaction/exp1-b-bb169ee8ea 200 claude-sonnet-5-5 6053 41332.1 
+sonnet title/exp1-b-bb169ee8ea 200 claude-sonnet-5-5 18 1151.2 
+haiku compaction/exp1-b-41741dcc2b 200 claude-haiku-5-5 6052 24633.0 
+haiku title/exp1-b-41741dcc2b 200 claude-haiku-5-5 19 561.5 
+microtensor compaction/exp1-b-2c6f7071cf 200 mt/ctx_compress 292 41247.1 
+sonnet compaction/exp1-b-be809a9c47 200 claude-sonnet-5-5 6974 47713.8 
+sonnet title/exp1-b-be809a9c47 200 claude-sonnet-5-5 21 893.5 
+microtensor title/exp1-b-2c6f7071cf 200 microtensor/session_title 0 44133.8 
+haiku compaction/exp1-b-43ceb7fafd 200 claude-haiku-5-5 13671 56762.5 
+haiku title/exp1-b-43ceb7fafd 200 claude-haiku-5-5 21 646.7 
+sonnet compaction/exp1-b-ca8d02f834 200 claude-sonnet-5-5 5223 34560.3 
+sonnet title/exp1-b-ca8d02f834 200 claude-sonnet-5-5 25 1085.7 
+microtensor compaction/exp1-b-41741dcc2b 200 mt/ctx_compress 280 46122.9 
+sonnet compaction/exp1-b-cbc6fdc2b2 200 claude-sonnet-5-5 4341 33654.3 
+sonnet title/exp1-b-cbc6fdc2b2 200 claude-sonnet-5-5 17 1296.6 
+haiku compaction/exp1-b-4f0d38ac56 200 claude-haiku-5-5 13167 53399.5 
+haiku title/exp1-b-4f0d38ac56 200 claude-haiku-5-5 21 696.6 
+microtensor title/exp1-b-41741dcc2b 200 microtensor/session_title 0 44298.5 
+sonnet compaction/exp1-b-f783f8f727 200 claude-sonnet-5-5 6523 43441.2 
+sonnet title/exp1-b-f783f8f727 200 claude-sonnet-5-5 28 1184.6 
+microtensor compaction/exp1-b-43ceb7fafd 200 mt/ctx_compress 253 42370.6 
+haiku compaction/exp1-b-8919a786f0 200 claude-haiku-5-5 20000 90602.8 
+haiku title/exp1-b-8919a786f0 200 claude-haiku-5-5 20 656.5 
+microtensor title/exp1-b-43ceb7fafd 200 microtensor/session_title 0 44316.6 
+microtensor compaction/exp1-b-4f0d38ac56 200 mt/ctx_compress 297 45644.5 
+haiku compaction/exp1-b-9bc982a9c0 200 claude-haiku-5-5 18080 76502.6 
+haiku title/exp1-b-9bc982a9c0 200 claude-haiku-5-5 20 696.3 
+microtensor title/exp1-b-4f0d38ac56 200 microtensor/session_title 0 44294.1 
+haiku compaction/exp1-b-9c47a696fb 200 claude-haiku-5-5 20000 84443.4 
+microtensor compaction/exp1-b-8919a786f0 200 mt/ctx_compress 354 51359.5 
+haiku title/exp1-b-9c47a696fb 200 claude-haiku-5-5 25 719.2 
+microtensor title/exp1-b-8919a786f0 200 microtensor/session_title 0 44670.2 
+haiku compaction/exp1-b-9d27998920 200 claude-haiku-5-5 10241 44782.6 
+haiku title/exp1-b-9d27998920 200 claude-haiku-5-5 21 587.3 
+microtensor compaction/exp1-b-9bc982a9c0 200 mt/ctx_compress 651 14083.5 
+haiku compaction/exp1-b-a5ce2d8ed7 200 claude-haiku-5-5 9573 39163.7 
+haiku title/exp1-b-a5ce2d8ed7 200 claude-haiku-5-5 18 697.2 
+microtensor title/exp1-b-9bc982a9c0 200 microtensor/session_title 0 43985.6 
+haiku compaction/exp1-b-b83b3853fc 200 claude-haiku-5-5 10562 45258.8 
+haiku title/exp1-b-b83b3853fc 200 claude-haiku-5-5 28 737.7 
+microtensor compaction/exp1-b-9c47a696fb 200 mt/ctx_compress 1486 46091.1 
+haiku compaction/exp1-b-bb169ee8ea 200 claude-haiku-5-5 11245 50098.0 
+haiku title/exp1-b-bb169ee8ea 200 claude-haiku-5-5 20 628.8 
+microtensor title/exp1-b-9c47a696fb 200 microtensor/session_title 0 46363.2 
+microtensor compaction/exp1-b-9d27998920 200 mt/ctx_compress 166 36769.1 
+haiku compaction/exp1-b-be809a9c47 200 claude-haiku-5-5 12102 50666.6 
+haiku title/exp1-b-be809a9c47 200 claude-haiku-5-5 21 614.6 
+microtensor title/exp1-b-9d27998920 200 microtensor/session_title 0 43633.9 
+haiku compaction/exp1-b-ca8d02f834 200 claude-haiku-5-5 14888 64543.8 
+haiku title/exp1-b-ca8d02f834 200 claude-haiku-5-5 25 702.7 
+microtensor compaction/exp1-b-a5ce2d8ed7 200 mt/ctx_compress 449 42112.5 
+haiku compaction/exp1-b-cbc6fdc2b2 200 claude-haiku-5-5 10074 43031.2 
+haiku title/exp1-b-cbc6fdc2b2 200 claude-haiku-5-5 19 615.8 
+microtensor title/exp1-b-a5ce2d8ed7 200 microtensor/session_title 0 44591.0 
+haiku compaction/exp1-b-f783f8f727 200 claude-haiku-5-5 9487 41378.7 
+haiku title/exp1-b-f783f8f727 200 claude-haiku-5-5 24 600.8 
+microtensor compaction/exp1-b-b83b3853fc 200 mt/ctx_compress 853 41682.1 
+microtensor title/exp1-b-b83b3853fc 200 microtensor/session_title 0 45704.3 
+microtensor compaction/exp1-b-bb169ee8ea 200 mt/ctx_compress 583 42725.6 
+microtensor title/exp1-b-bb169ee8ea 200 microtensor/session_title 0 44958.7 
+microtensor compaction/exp1-b-be809a9c47 200 mt/ctx_compress 408 42016.7 
+microtensor title/exp1-b-be809a9c47 200 microtensor/session_title 0 46962.5 
+microtensor compaction/exp1-b-ca8d02f834 200 mt/ctx_compress 318 42240.8 
+microtensor title/exp1-b-ca8d02f834 200 microtensor/session_title 0 45157.8 
+microtensor compaction/exp1-b-cbc6fdc2b2 200 mt/ctx_compress 379 15227.7 
+microtensor title/exp1-b-cbc6fdc2b2 200 microtensor/session_title 0 43913.2 
+microtensor compaction/exp1-b-f783f8f727 200 mt/ctx_compress 713 17388.4 
+microtensor title/exp1-b-f783f8f727 200 microtensor/session_title 0 44111.4 
+==> done 2026-11-09T05:07:11Z

@@ -1,0 +1,4 @@
+model,cost_per_compaction_usd,compactions_answered
+Claude Haiku 5.5,0.08489658333333333,36
+Claude Sonnet 5.5,0.3056981111111111,36
+Microtensor,0.005,36

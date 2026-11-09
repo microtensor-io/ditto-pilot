@@ -1,0 +1,202 @@
+==> 2026-11-09T04:14:17Z bootstrap on 414448399e46
+NVIDIA GeForce RTX 3090, 24576 MiB
+==> packages
+
+[notice] A new release of pip is available: 26.2.1 -> 26.3
+[notice] To update, run: python3.12 -m pip install --upgrade pip
+vllm 0.32.0
+==> system
+Fetching 27 files:   0%|          | 0/27 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 27 files:   7%|▋         | 2/27 [00:00<00:01, 16.11it/s]Fetching 27 files:  19%|█▊        | 5/27 [00:00<00:01, 20.53it/s]Fetching 27 files:  44%|████▍     | 12/27 [00:00<00:00, 40.23it/s]Fetching 27 files:  70%|███████   | 19/27 [00:00<00:00, 45.24it/s]Fetching 27 files: 100%|██████████| 27/27 [00:00<00:00, 51.87it/s]Fetching 27 files: 100%|██████████| 27/27 [00:00<00:00, 43.95it/s]
+Fetching 32 files:   0%|          | 0/32 [00:00<?, ?it/s]Fetching 32 files:   9%|▉         | 3/32 [00:00<00:01, 21.56it/s]Fetching 32 files:  25%|██▌       | 8/32 [00:00<00:00, 34.35it/s]Fetching 32 files:  38%|███▊      | 12/32 [00:00<00:00, 21.63it/s]Fetching 32 files:  50%|█████     | 16/32 [00:00<00:00, 25.10it/s]Fetching 32 files:  62%|██████▎   | 20/32 [00:00<00:00, 26.82it/s]Fetching 32 files:  75%|███████▌  | 24/32 [00:00<00:00, 28.85it/s]Fetching 32 files:  88%|████████▊ | 28/32 [00:01<00:00, 14.89it/s]Fetching 32 files:  94%|█████████▍| 30/32 [00:19<00:00, 14.89it/s]Fetching 32 files:  97%|█████████▋| 31/32 [00:41<00:03,  3.50s/it]Fetching 32 files: 100%|██████████| 32/32 [01:03<00:00,  5.57s/it]Fetching 32 files: 100%|██████████| 32/32 [01:03<00:00,  2.00s/it]
+prepared mt/ctx_compress artifact 868e04b7763c weights e7528c4970d1 max_model_len 125952 route model max_output 3072
+==> shim
+{"status": "ok", "model": "mt/ctx_compress"}
+==> wallet
+hotkey 5GU2B4oc4hsXPvKVs9VLManVXrhyHy9DrawnoNnMFzUgnbfs
+==> register
+04:17:37 INFO    bittensor                        Enabling default logging (Warning level)
+[34m2026-11-09 04:17:37.708[39m | [1m[37m  INFO  [0m | Enabling default logging (Warning level)
+registered 5GU2B4oc4hsXPvKVs9VLManVXrhyHy9DrawnoNnMFzUgnbfs
+{
+  "admitted_at": "2026-11-07T18:16:15.897662+00:00",
+  "coldkey": "5EExcQUNUGN2eA7LeG8pjV1cnZvyEvqCcPmm6SCCucGnPeR9",
+  "collateral": {
+    "cards": 4,
+    "locked_until": "2026-11-23T03:47:45.053943+00:00",
+    "per_card_tao": 0.0,
+    "posted_tao": 0.0,
+    "required_tao": 0.0,
+    "returnable_tao": 0.0
+  },
+  "collateral_pay_to": "5G9ca9pgbCa63aJWbDAF3dNLhUtbFDYf1fnPMnByf9uyUNFh",
+  "collateral_per_card_tao": 0.0,
+  "collateral_rao": 0,
+  "collateral_required_tao": 0.0,
+  "collateral_tao": 0.0,
+  "concurrency": 0,
+  "gpus": [
+    {
+      "admission_passes": 5,
+      "admitted": true,
+      "agent_version": "0.6.0",
+      "artifact_digest": "868e04b7763ca49aab19e2d93cfca8eb256dc5ce",
+      "concurrency": 16,
+      "cuda": "",
+      "driver": "595.91.07",
+      "engine": "",
+      "gpu": "gpu-0",
+      "id": "GPU-3262fac9-5a9e-3fd0-f6ff-8e702e6ca89c",
+      "image_digest": "",
+      "in_flight": 1,
+      "last_probe_at": "2026-11-07T22:15:07.259018+00:00",
+      "last_seen_at": "2026-11-07T22:16:50.672346+00:00",
+      "last_served_at": "2026-11-07T22:16:50.672346+00:00",
+      "memory_mb": 46068,
+      "memory_used_mb": 21975,
+      "model": "mt/ctx_compress",
+      "name": "NVIDIA A40",
+      "online": false,
+      "online_since": "",
+      "paused_until": "",
+      "phase": "",
+      "recheck_due": false,
+      "removed_at": "",
+      "slot": 0,
+      "status": "offline",
+      "utilisation": 1.0,
+      "worker": "podb"
+    },
+    {
+      "admission_passes": 0,
+      "admitted": false,
+      "agent_version": "0.6.0",
+      "artifact_digest": "",
+      "concurrency": 0,
+      "cuda": "",
+      "driver": "595.91.07",
+      "engine": "",
+      "gpu": "gpu-1",
+      "id": "GPU-2cf463ed-05ee-4ff7-d527-3c6118fb64a5",
+      "image_digest": "",
+      "in_flight": 0,
+      "last_probe_at": "",
+      "last_seen_at": "2026-11-07T19:35:46.525300+00:00",
+      "last_served_at": "",
+      "memory_mb": 24564,
+      "memory_used_mb": 0,
+      "model": "",
+      "name": "NVIDIA GeForce RTX 4090",
+      "online": false,
+      "online_since": "",
+      "paused_until": "",
+      "phase": "",
+      "recheck_due": false,
+      "removed_at": "",
+      "slot": 0,
+      "status": "offline",
+      "utilisation": 0.0,
+      "worker": "pod"
+    },
+    {
+      "admission_passes": 5,
+      "admitted": true,
+      "agent_version": "0.6.0",
+      "artifact_digest": "868e04b7763ca49aab19e2d93cfca8eb256dc5ce",
+      "concurrency": 16,
+      "cuda": "",
+      "driver": "595.91.07",
+      "engine": "",
+      "gpu": "gpu-2",
+      "id": "GPU-daf52d34-d6a8-efea-3f79-d637aa0bd9f3",
+      "image_digest": "",
+      "in_flight": 0,
+      "last_probe_at": "2026-11-07T22:15:52.205505+00:00",
+      "last_seen_at": "2026-11-07T22:25:59.337039+00:00",
+      "last_served_at": "2026-11-07T22:17:26.758274+00:00",
+      "memory_mb": 24564,
+      "memory_used_mb": 21946,
+      "model": "mt/ctx_compress",
+      "name": "NVIDIA GeForce RTX 4090",
+      "online": false,
+      "online_since": "",
+      "paused_until": "",
+      "phase": "",
+      "recheck_due": false,
+      "removed_at": "",
+      "slot": 0,
+      "status": "offline",
+      "utilisation": 0.0,
+      "worker": "pod"
+    },
+    {
+      "admission_passes": 5,
+      "admitted": true,
+      "agent_version": "0.6.0",
+      "artifact_digest": "868e04b7763ca49aab19e2d93cfca8eb256dc5ce",
+      "concurrency": 4,
+      "cuda": "",
+      "driver": "580.65.06",
+      "engine": "",
+      "gpu": "gpu-3",
+      "id": "GPU-ee8b8757-8f58-18b4-883b-2693b2a1a137",
+      "image_digest": "",
+      "in_flight": 0,
+      "last_probe_at": "2026-11-09T03:47:48.133843+00:00",
+      "last_seen_at": "2026-11-09T04:13:52.574050+00:00",
+      "last_served_at": "2026-11-09T03:47:45.053943+00:00",
+      "memory_mb": 24576,
+      "memory_used_mb": 21850,
+      "model": "mt/ctx_compress",
+      "name": "NVIDIA GeForce RTX 3090",
+      "online": false,
+      "online_since": "",
+      "paused_until": "",
+      "phase": "",
+      "recheck_due": false,
+      "removed_at": "",
+      "slot": 0,
+      "status": "offline",
+      "utilisation": 0.0,
+      "worker": "pod"
+    }
+  ],
+  "hotkey": "5GU2B4oc4hsXPvKVs9VLManVXrhyHy9DrawnoNnMFzUgnbfs",
+  "label": "loadtest 4090",
+  "models": [
+    {
+      "artifact_digest": "868e04b7763ca49aab19e2d93cfca8eb256dc5ce",
+      "eligible": true,
+      "model": "mt/ctx_compress"
+    }
+  ],
+  "online": false,
+  "slashed_tao": 0.0,
+  "slashing": [],
+  "state": "admitted",
+  "team": false,
+  "withdrawn_reason": ""
+}
+==> run
+pin mt/ctx_compress@868e04b7763c
+04:17:39 INFO    bittensor                        Enabling default logging (Warning level)
+[34m2026-11-09 04:17:39.736[39m | [1m[37m  INFO  [0m | Enabling default logging (Warning level)
+gpu 0: NVIDIA GeForce RTX 3090 24 GB (GPU-ee8b8757-8f58-18b4-883b-2693b2a1a137)
+serving as 5GU2B4oc4hsXPvKVs9VLManVXrhyHy9DrawnoNnMFzUgnbfs from https://api.microtensor.cloud
+04:17:41 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding nothing
+04:17:41 INFO    microtensor_subnet.serving.host  taking up mt/ctx_compress (868e04b7763c) on gpu 0
+04:17:41 INFO    microtensor_subnet.serving.wire  dialled wss://api.microtensor.cloud/v1/operators/socket as 5GU2B4oc4hsX with 1 gpus for nothing yet
+04:17:41 INFO    microtensor_subnet.serving.host  mt/ctx_compress ready on gpu 0 from the shim at http://127.0.0.1:8800
+04:17:42 INFO    microtensor_subnet.serving.wire  dialled wss://api.microtensor.cloud/v1/operators/socket as 5GU2B4oc4hsX with 1 gpus for mt/ctx_compress
+04:17:42 INFO    microtensor_subnet.serving.host  the gateway suggests {'0': 'mt/ctx_compress'}
+04:17:42 INFO    microtensor_subnet.serving.wire  instance gpu-3 accepted as serving
+04:22:43 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}
+04:27:44 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}
+04:32:45 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}
+04:37:46 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}
+04:42:48 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}
+04:47:49 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}
+04:52:50 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}
+04:57:51 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}
+05:02:52 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}
+05:07:53 INFO    microtensor_subnet.serving.host  plan: hold [('0', 'mt/ctx_compress')], drop nothing, holding {'0': ('mt/ctx_compress', '868e04b7763ca49aab19e2d93cfca8eb256dc5ce')}

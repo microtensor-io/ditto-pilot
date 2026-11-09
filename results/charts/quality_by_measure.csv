@@ -1,0 +1,16 @@
+model,measure,share
+Claude Haiku 5.5,Passed the grader,0.08333333333333333
+Claude Haiku 5.5,Kept all 9 headings,0.5833333333333334
+Claude Haiku 5.5,Within the budget,0.4444444444444444
+Claude Haiku 5.5,Recall of key facts,0.6672101607924621
+Claude Haiku 5.5,No invented identifiers,0.9482772049818988
+Claude Sonnet 5.5,Passed the grader,0.4444444444444444
+Claude Sonnet 5.5,Kept all 9 headings,1.0
+Claude Sonnet 5.5,Within the budget,0.8611111111111112
+Claude Sonnet 5.5,Recall of key facts,0.7836796774490273
+Claude Sonnet 5.5,No invented identifiers,0.9354403151126415
+Microtensor,Passed the grader,0.3055555555555556
+Microtensor,Kept all 9 headings,1.0
+Microtensor,Within the budget,1.0
+Microtensor,Recall of key facts,0.4810502773609069
+Microtensor,No invented identifiers,0.9832443892555449
