@@ -73,8 +73,10 @@ def main() -> int:
         {
             "name": "ditto-pilot-replay",
             "imageName": IMAGE,
-            "gpuTypeIds": ["NVIDIA GeForce RTX 4090"],
+            "gpuTypeIds": os.environ.get("RUNPOD_GPUS", "NVIDIA GeForce RTX 4090").split(","),
             "gpuCount": 1,
+            "gpuTypePriority": "custom",
+            "allowedCudaVersions": ["13.0"],
             "cloudType": os.environ.get("RUNPOD_CLOUD", "SECURE"),
             "computeType": "GPU",
             "containerDiskInGb": 80,
