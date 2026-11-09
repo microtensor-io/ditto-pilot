@@ -81,6 +81,7 @@ def main() -> int:
         "ANTHROPIC_API_KEY": os.environ["ANTHROPIC_API_KEY"],
         "MICROTENSOR_API_KEY": os.environ["MICROTENSOR_API_KEY"],
         "VLLM_NO_USAGE_STATS": "1",
+        **({"RERUN_IDS": os.environ["RERUN_IDS"]} if os.environ.get("RERUN_IDS") else {}),
     }
     print("payload bytes", len(packed), "in", len(parts), "parts", file=sys.stderr)
     if len(sys.argv) > 1:

@@ -102,6 +102,45 @@ def messages_of(text: str) -> list[dict[str, Any]]:
             add("user", result)
     if messages and messages[0]["role"] != "user":
         messages.insert(0, {"role": "user", "content": [{"type": "text", "text": "Continue."}]})
+    return paired(messages)
+
+
+def paired(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    carry: list[dict[str, Any]] = []
+    for index, message in enumerate(messages):
+        if message["role"] == "assistant":
+            if carry:
+                at = next(
+                    (i for i, b in enumerate(message["content"]) if b.get("type") == "tool_use"),
+                    len(message["content"]),
+                )
+                message["content"][at:at] = carry
+                carry = []
+            continue
+        answered = {b.get("tool_use_id") for b in message["content"] if b.get("type") == "tool_result"}
+        previous = messages[index - 1] if index else None
+        if previous is None or previous["role"] != "assistant":
+            continue
+        late = [b for b in previous["content"] if b.get("type") == "tool_use" and b["id"] not in answered]
+        kept = [b for b in previous["content"] if b not in late]
+        if late and kept and index + 1 < len(messages):
+            previous["content"] = kept
+            carry = late
+        elif late:
+            message["content"][0:0] = [
+                {
+                    "type": "tool_result",
+                    "tool_use_id": b["id"],
+                    "content": "[Request interrupted by user for tool use]",
+                    "is_error": True,
+                }
+                for b in late
+            ]
+    if messages and messages[-1]["role"] == "assistant":
+        open_calls = [b for b in messages[-1]["content"] if b.get("type") == "tool_use"]
+        if open_calls:
+            messages.append({"role": "user", "content": []})
+            return paired(messages)
     return messages
 
 

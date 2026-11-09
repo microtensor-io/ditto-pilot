@@ -63,6 +63,14 @@ for _ in $(seq 1 240); do
   sleep 15
 done
 
+if [ -n "${RERUN_IDS:-}" ]; then
+  echo "==> rerun ${RERUN_IDS} $(date -u +%T)"
+  python3 -m replay.run --requests /work/requests.jsonl --router-off http://127.0.0.1:8081 --router-on http://127.0.0.1:8082 --ids "${RERUN_IDS}" --out /work/rerun
+  echo "==> done $(date -u +%FT%TZ)"
+  touch /work/DONE
+  sleep infinity
+fi
+
 echo "==> smoke"
 python3 -m replay.run --requests /work/requests.jsonl --router-off http://127.0.0.1:8081 --router-on http://127.0.0.1:8082 --limit 1 --out /work/smoke
 SMOKE_OK="$(python3 - <<'EOF'

@@ -134,6 +134,7 @@ def main() -> int:
     parser.add_argument("--router-on", required=True)
     parser.add_argument("--arms", default="haiku,sonnet,microtensor")
     parser.add_argument("--only", default="")
+    parser.add_argument("--ids", default="")
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--out", default="results/outputs")
     args = parser.parse_args()
@@ -145,6 +146,9 @@ def main() -> int:
     if args.only:
         wanted = set(args.only.split(","))
         requests = [r for r in requests if r["kind"] in wanted]
+    if args.ids:
+        chosen = set(args.ids.split(","))
+        requests = [r for r in requests if r["id"] in chosen]
     if args.limit:
         seen: dict[str, int] = {}
         kept = []
