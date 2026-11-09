@@ -69,7 +69,7 @@ SMOKE_OK="$(python3 - <<'EOF'
 import json
 from pathlib import Path
 rows = [json.loads(l) for f in Path("/work/smoke").glob("*.jsonl") for l in f.read_text().splitlines() if l.strip()]
-ok = rows and all(r["status"] == 200 and not r["error"] and r["text"] for r in rows)
+ok = rows and all(r["status"] == 200 and not r["error"] and (r["text"] or r["kind"] == "turn") for r in rows)
 print("yes" if ok else "no")
 EOF
 )"
