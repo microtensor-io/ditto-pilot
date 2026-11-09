@@ -13,7 +13,22 @@ from pathlib import Path
 REST = "https://rest.runpod.io/v1"
 IMAGE = "vllm/vllm-openai:v0.32.0"
 ROOT = Path(__file__).resolve().parents[2]
-SHIPPED = ("relay", "replay", "bench", "catalog.json", "requirements.txt")
+SHIPPED = (
+    "relay",
+    "bench",
+    "replay/build.py",
+    "replay/run.py",
+    "replay/claude_code_compact_instruction.txt",
+    "replay/pod/boot.sh",
+    "catalog.json",
+    "requirements.txt",
+)
+CHUNK = 4000
+START = (
+    "mkdir -p /opt/pilot && "
+    'for i in $(seq 0 $((PILOT_PARTS-1))); do v="PILOT_$i"; printf %s "${!v}"; done '
+    "| base64 -d | tar xz -C /opt/pilot && bash /opt/pilot/replay/pod/boot.sh"
+)
 
 
 def pilot_tarball() -> str:
@@ -51,10 +66,11 @@ def call(method: str, path: str, body: dict | None = None) -> dict:
 
 
 def main() -> int:
-    boot = (ROOT / "replay" / "pod" / "boot.sh").read_bytes()
+    packed = pilot_tarball()
+    parts = [packed[i : i + CHUNK] for i in range(0, len(packed), CHUNK)]
     env = {
-        "BOOT_B64": base64.b64encode(boot).decode(),
-        "PILOT_B64": pilot_tarball(),
+        **{f"PILOT_{i}": part for i, part in enumerate(parts)},
+        "PILOT_PARTS": str(len(parts)),
         "RAW_REF": os.environ["RAW_REF"],
         "SUBNET_REF": os.environ["SUBNET_REF"],
         "MT_LABEL": os.environ.get("MT_LABEL", "loadtest 4090"),
@@ -66,7 +82,7 @@ def main() -> int:
         "MICROTENSOR_API_KEY": os.environ["MICROTENSOR_API_KEY"],
         "VLLM_NO_USAGE_STATS": "1",
     }
-    print("payload bytes", len(env["PILOT_B64"]) + len(env["BOOT_B64"]), file=sys.stderr)
+    print("payload bytes", len(packed), "in", len(parts), "parts", file=sys.stderr)
     found = call(
         "POST",
         "/pods",
@@ -83,7 +99,7 @@ def main() -> int:
             "volumeInGb": 0,
             "ports": ["8070/http"],
             "dockerEntrypoint": ["/bin/bash", "-c"],
-            "dockerStartCmd": ['echo "$BOOT_B64" | base64 -d > /tmp/boot.sh && bash /tmp/boot.sh'],
+            "dockerStartCmd": [START],
             "env": env,
         },
     )

@@ -9,7 +9,6 @@ curl -fsSL "https://raw.githubusercontent.com/microtensor-io/microtensor-compari
 (MT_SHIM_WORKERS=4 SUBNET_REF="${SUBNET_REF}" RAW="https://raw.githubusercontent.com/microtensor-io/microtensor-comparisons/${RAW_REF}/ctx_compress/loadtest1/pod" bash /tmp/operator.sh > /work/operator.log 2>&1 &)
 
 echo "==> pilot code"
-echo "${PILOT_B64}" | base64 -d | tar xz -C /opt/pilot
 cd /opt/pilot
 python3 -m venv /opt/venv
 . /opt/venv/bin/activate
