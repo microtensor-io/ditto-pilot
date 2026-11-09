@@ -6,6 +6,9 @@ echo "==> $(date -u +%FT%TZ) replay pod on $(hostname)"
 
 echo "==> operator"
 curl -fsSL "https://raw.githubusercontent.com/microtensor-io/microtensor-comparisons/${RAW_REF}/ctx_compress/loadtest1/pod/bootstrap.sh" -o /tmp/operator.sh
+sed -i 's#git+https://github.com/microtensor-io/microtensor-subnet@\${SUBNET_REF}#https://github.com/microtensor-io/microtensor-subnet/archive/${SUBNET_REF}.tar.gz#' /tmp/operator.sh
+grep -n "microtensor-subnet" /tmp/operator.sh
+echo "compilers: cc=$(command -v cc) gcc=$(command -v gcc) git=$(command -v git)"
 (MT_SHIM_WORKERS=4 SUBNET_REF="${SUBNET_REF}" RAW="https://raw.githubusercontent.com/microtensor-io/microtensor-comparisons/${RAW_REF}/ctx_compress/loadtest1/pod" bash /tmp/operator.sh > /work/operator.log 2>&1 &)
 
 echo "==> pilot code"
@@ -20,15 +23,17 @@ python3 -c "from huggingface_hub import hf_hub_download; print(hf_hub_download('
 (python3 -m llama_cpp.server --model /opt/standin/qwen2.5-1.5b-instruct-q8_0.gguf --model_alias slm --host 127.0.0.1 --port 8100 --n_ctx 8192 --n_threads 8 > /work/standin.log 2>&1 &)
 
 echo "==> router fork"
-for _ in $(seq 1 120); do command -v git > /dev/null 2>&1 && break; sleep 5; done
-if ! command -v git > /dev/null 2>&1 || ! command -v cc > /dev/null 2>&1; then
-  apt-get update -qq > /dev/null 2>&1
-  apt-get install -y -qq git build-essential > /dev/null 2>&1
+if ! command -v cc > /dev/null 2>&1; then
+  sleep 60
+  apt-get update > /work/apt.log 2>&1
+  apt-get install -y build-essential >> /work/apt.log 2>&1
+  tail -3 /work/apt.log
 fi
-echo "git $(command -v git) cc $(command -v cc)"
+echo "cc $(command -v cc)"
 curl -fsSL https://sh.rustup.rs -o /tmp/rustup.sh && sh /tmp/rustup.sh -y --profile minimal > /dev/null 2>&1
 . "$HOME/.cargo/env"
-git clone -q --depth 1 --branch microtensor-route-table https://github.com/microtensor-io/ditto-subnet /opt/ditto-subnet
+mkdir -p /opt/ditto-subnet
+curl -fsSL https://codeload.github.com/microtensor-io/ditto-subnet/tar.gz/refs/heads/microtensor-route-table | tar xz -C /opt/ditto-subnet --strip-components=1
 cd /opt/ditto-subnet/miners/dittobench-router-starter-kit
 cargo build --release --locked 2>&1 | tail -2
 ROUTER=/opt/ditto-subnet/miners/dittobench-router-starter-kit/target/release/dittobench-router-miner
