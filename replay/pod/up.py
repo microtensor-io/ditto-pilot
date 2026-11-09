@@ -83,6 +83,10 @@ def main() -> int:
         "VLLM_NO_USAGE_STATS": "1",
     }
     print("payload bytes", len(packed), "in", len(parts), "parts", file=sys.stderr)
+    if len(sys.argv) > 1:
+        found = call("POST", f"/pods/{sys.argv[1]}/update", {"env": env, "dockerStartCmd": [START]})
+        print(json.dumps({k: found.get(k) for k in ("id", "desiredStatus", "costPerHr")}))
+        return 0
     found = call(
         "POST",
         "/pods",

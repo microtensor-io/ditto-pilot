@@ -20,6 +20,12 @@ python3 -c "from huggingface_hub import hf_hub_download; print(hf_hub_download('
 (python3 -m llama_cpp.server --model /opt/standin/qwen2.5-1.5b-instruct-q8_0.gguf --model_alias slm --host 127.0.0.1 --port 8100 --n_ctx 8192 --n_threads 8 > /work/standin.log 2>&1 &)
 
 echo "==> router fork"
+for _ in $(seq 1 120); do command -v git > /dev/null 2>&1 && break; sleep 5; done
+if ! command -v git > /dev/null 2>&1 || ! command -v cc > /dev/null 2>&1; then
+  apt-get update -qq > /dev/null 2>&1
+  apt-get install -y -qq git build-essential > /dev/null 2>&1
+fi
+echo "git $(command -v git) cc $(command -v cc)"
 curl -fsSL https://sh.rustup.rs -o /tmp/rustup.sh && sh /tmp/rustup.sh -y --profile minimal > /dev/null 2>&1
 . "$HOME/.cargo/env"
 git clone -q --depth 1 --branch microtensor-route-table https://github.com/microtensor-io/ditto-subnet /opt/ditto-subnet
