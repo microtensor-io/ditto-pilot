@@ -4,6 +4,8 @@ mkdir -p /work /opt/pilot /opt/standin
 exec > >(tee -a /work/replay.log) 2>&1
 echo "==> $(date -u +%FT%TZ) replay pod on $(hostname)"
 
+echo "==> gpu check: $(python3 -c 'import torch; torch.cuda.init(); x = torch.ones(1024, device="cuda"); print("ok", torch.cuda.get_device_name(0), float(x.sum()))' 2>&1 | tail -1)"
+
 echo "==> operator"
 curl -fsSL "https://raw.githubusercontent.com/microtensor-io/microtensor-comparisons/${RAW_REF}/ctx_compress/loadtest1/pod/bootstrap.sh" -o /tmp/operator.sh
 sed -i 's#git+https://github.com/microtensor-io/microtensor-subnet@\${SUBNET_REF}#https://github.com/microtensor-io/microtensor-subnet/archive/${SUBNET_REF}.tar.gz#' /tmp/operator.sh
