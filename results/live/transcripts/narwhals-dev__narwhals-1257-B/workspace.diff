@@ -1,0 +1,355 @@
+diff --git a/narwhals/_arrow/dataframe.py b/narwhals/_arrow/dataframe.py
+index 6b87f1d..b5de570 100644
+--- a/narwhals/_arrow/dataframe.py
++++ b/narwhals/_arrow/dataframe.py
+@@ -335,10 +335,10 @@ class ArrowDataFrame:
+         df = self._native_frame.__class__.from_arrays(to_concat, names=output_names)
+         return self._from_native_frame(df)
+ 
+-    def group_by(self, *keys: str) -> ArrowGroupBy:
++    def group_by(self, *keys: str, drop_null_keys: bool) -> ArrowGroupBy:
+         from narwhals._arrow.group_by import ArrowGroupBy
+ 
+-        return ArrowGroupBy(self, list(keys))
++        return ArrowGroupBy(self, list(keys), drop_null_keys=drop_null_keys)
+ 
+     def join(
+         self,
+diff --git a/narwhals/_arrow/expr.py b/narwhals/_arrow/expr.py
+index c9ee160..35e936d 100644
+--- a/narwhals/_arrow/expr.py
++++ b/narwhals/_arrow/expr.py
+@@ -353,7 +353,7 @@ class ArrowExpr:
+                     "`nw.col('a', 'b')`\n"
+                 )
+                 raise ValueError(msg)
+-            tmp = df.group_by(*keys).agg(self)
++            tmp = df.group_by(*keys, drop_null_keys=False).agg(self)
+             tmp = df.select(*keys).join(
+                 tmp, how="left", left_on=keys, right_on=keys, suffix="_right"
+             )
+diff --git a/narwhals/_arrow/group_by.py b/narwhals/_arrow/group_by.py
+index 6c7b204..322206e 100644
+--- a/narwhals/_arrow/group_by.py
++++ b/narwhals/_arrow/group_by.py
+@@ -37,10 +37,15 @@ def get_function_name_option(function_name: str) -> Any | None:
+ 
+ 
+ class ArrowGroupBy:
+-    def __init__(self, df: ArrowDataFrame, keys: list[str]) -> None:
++    def __init__(
++        self, df: ArrowDataFrame, keys: list[str], *, drop_null_keys: bool
++    ) -> None:
+         import pyarrow as pa  # ignore-banned-import()
+ 
+-        self._df = df
++        if drop_null_keys:
++            self._df = df.drop_nulls(keys)
++        else:
++            self._df = df
+         self._keys = list(keys)
+         self._grouped = pa.TableGroupBy(self._df._native_frame, list(self._keys))
+ 
+diff --git a/narwhals/_dask/dataframe.py b/narwhals/_dask/dataframe.py
+index f78f48b..bc8dbae 100644
+--- a/narwhals/_dask/dataframe.py
++++ b/narwhals/_dask/dataframe.py
+@@ -345,10 +345,10 @@ class DaskLazyFrame:
+             ),
+         )
+ 
+-    def group_by(self, *by: str) -> DaskLazyGroupBy:
++    def group_by(self, *by: str, drop_null_keys: bool) -> DaskLazyGroupBy:
+         from narwhals._dask.group_by import DaskLazyGroupBy
+ 
+-        return DaskLazyGroupBy(self, list(by))
++        return DaskLazyGroupBy(self, list(by), drop_null_keys=drop_null_keys)
+ 
+     def tail(self: Self, n: int) -> Self:
+         native_frame = self._native_frame
+diff --git a/narwhals/_dask/expr.py b/narwhals/_dask/expr.py
+index d3ae29b..0b9e979 100644
+--- a/narwhals/_dask/expr.py
++++ b/narwhals/_dask/expr.py
+@@ -670,7 +670,7 @@ class DaskExpr:
+                 raise ValueError(msg)
+ 
+             if df._native_frame.npartitions == 1:  # pragma: no cover
+-                tmp = df.group_by(*keys).agg(self)
++                tmp = df.group_by(*keys, drop_null_keys=False).agg(self)
+                 tmp_native = (
+                     df.select(*keys)
+                     .join(tmp, how="left", left_on=keys, right_on=keys, suffix="_right")
+diff --git a/narwhals/_dask/group_by.py b/narwhals/_dask/group_by.py
+index 55ef69f..2ef3a57 100644
+--- a/narwhals/_dask/group_by.py
++++ b/narwhals/_dask/group_by.py
+@@ -41,12 +41,14 @@ POLARS_TO_DASK_AGGREGATIONS = {
+ 
+ 
+ class DaskLazyGroupBy:
+-    def __init__(self, df: DaskLazyFrame, keys: list[str]) -> None:
+-        self._df = df
++    def __init__(
++        self, df: DaskLazyFrame, keys: list[str], *, drop_null_keys: bool
++    ) -> None:
++        self._df = df.drop_nulls(keys) if drop_null_keys else df
+         self._keys = keys
+         self._grouped = self._df._native_frame.groupby(
+             list(self._keys),
+-            dropna=False,
++            dropna=drop_null_keys,
+             observed=True,
+         )
+ 
+diff --git a/narwhals/_pandas_like/dataframe.py b/narwhals/_pandas_like/dataframe.py
+index b1860a5..afab0f2 100644
+--- a/narwhals/_pandas_like/dataframe.py
++++ b/narwhals/_pandas_like/dataframe.py
+@@ -470,12 +470,13 @@ class PandasLikeDataFrame:
+         )
+ 
+     # --- actions ---
+-    def group_by(self, *keys: str) -> PandasLikeGroupBy:
++    def group_by(self, *keys: str, drop_null_keys: bool) -> PandasLikeGroupBy:
+         from narwhals._pandas_like.group_by import PandasLikeGroupBy
+ 
+         return PandasLikeGroupBy(
+             self,
+             list(keys),
++            drop_null_keys=drop_null_keys,
+         )
+ 
+     def join(
+diff --git a/narwhals/_pandas_like/expr.py b/narwhals/_pandas_like/expr.py
+index a408223..a58597e 100644
+--- a/narwhals/_pandas_like/expr.py
++++ b/narwhals/_pandas_like/expr.py
+@@ -331,7 +331,7 @@ class PandasLikeExpr:
+                     "`nw.col('a', 'b')`\n"
+                 )
+                 raise ValueError(msg)
+-            tmp = df.group_by(*keys).agg(self)
++            tmp = df.group_by(*keys, drop_null_keys=False).agg(self)
+             tmp = df.select(*keys).join(
+                 tmp, how="left", left_on=keys, right_on=keys, suffix="_right"
+             )
+diff --git a/narwhals/_pandas_like/group_by.py b/narwhals/_pandas_like/group_by.py
+index ee18dc7..e0e46b4 100644
+--- a/narwhals/_pandas_like/group_by.py
++++ b/narwhals/_pandas_like/group_by.py
+@@ -26,14 +26,19 @@ POLARS_TO_PANDAS_AGGREGATIONS = {
+ 
+ 
+ class PandasLikeGroupBy:
+-    def __init__(self, df: PandasLikeDataFrame, keys: list[str]) -> None:
++    def __init__(
++        self, df: PandasLikeDataFrame, keys: list[str], *, drop_null_keys: bool
++    ) -> None:
+         self._df = df
+         self._keys = keys
+         if (
+             self._df._implementation is Implementation.PANDAS
+             and self._df._backend_version < (1, 1)
+         ):  # pragma: no cover
+-            if self._df._native_frame.loc[:, self._keys].isna().any().any():
++            if (
++                not drop_null_keys
++                and self._df._native_frame.loc[:, self._keys].isna().any().any()
++            ):
+                 msg = "Grouping by null values is not supported in pandas < 1.0.0"
+                 raise NotImplementedError(msg)
+             self._grouped = self._df._native_frame.groupby(
+@@ -47,7 +52,7 @@ class PandasLikeGroupBy:
+                 list(self._keys),
+                 sort=False,
+                 as_index=True,
+-                dropna=False,
++                dropna=drop_null_keys,
+                 observed=True,
+             )
+ 
+diff --git a/narwhals/_polars/dataframe.py b/narwhals/_polars/dataframe.py
+index ff80148..832331e 100644
+--- a/narwhals/_polars/dataframe.py
++++ b/narwhals/_polars/dataframe.py
+@@ -203,10 +203,10 @@ class PolarsDataFrame:
+         else:
+             return df.to_dict(as_series=False)
+ 
+-    def group_by(self, *by: str) -> Any:
++    def group_by(self, *by: str, drop_null_keys: bool) -> Any:
+         from narwhals._polars.group_by import PolarsGroupBy
+ 
+-        return PolarsGroupBy(self, list(by))
++        return PolarsGroupBy(self, list(by), drop_null_keys=drop_null_keys)
+ 
+     def with_row_index(self, name: str) -> Any:
+         if self._backend_version < (0, 20, 4):  # pragma: no cover
+@@ -312,10 +312,10 @@ class PolarsLazyFrame:
+             dtypes=self._dtypes,
+         )
+ 
+-    def group_by(self, *by: str) -> Any:
++    def group_by(self, *by: str, drop_null_keys: bool) -> Any:
+         from narwhals._polars.group_by import PolarsLazyGroupBy
+ 
+-        return PolarsLazyGroupBy(self, list(by))
++        return PolarsLazyGroupBy(self, list(by), drop_null_keys=drop_null_keys)
+ 
+     def with_row_index(self, name: str) -> Any:
+         if self._backend_version < (0, 20, 4):  # pragma: no cover
+diff --git a/narwhals/_polars/group_by.py b/narwhals/_polars/group_by.py
+index f03da61..6235991 100644
+--- a/narwhals/_polars/group_by.py
++++ b/narwhals/_polars/group_by.py
+@@ -11,10 +11,13 @@ if TYPE_CHECKING:
+ 
+ 
+ class PolarsGroupBy:
+-    def __init__(self, df: Any, keys: list[str]) -> None:
++    def __init__(self, df: Any, keys: list[str], *, drop_null_keys: bool) -> None:
+         self._compliant_frame = df
+         self.keys = keys
+-        self._grouped = df._native_frame.group_by(keys)
++        if drop_null_keys:
++            self._grouped = df._native_frame.drop_nulls(keys).group_by(keys)
++        else:
++            self._grouped = df._native_frame.group_by(keys)
+ 
+     def agg(self, *aggs: Any, **named_aggs: Any) -> PolarsDataFrame:
+         aggs, named_aggs = extract_args_kwargs(aggs, named_aggs)  # type: ignore[assignment]
+@@ -28,10 +31,13 @@ class PolarsGroupBy:
+ 
+ 
+ class PolarsLazyGroupBy:
+-    def __init__(self, df: Any, keys: list[str]) -> None:
++    def __init__(self, df: Any, keys: list[str], *, drop_null_keys: bool) -> None:
+         self._compliant_frame = df
+         self.keys = keys
+-        self._grouped = df._native_frame.group_by(keys)
++        if drop_null_keys:
++            self._grouped = df._native_frame.drop_nulls(keys).group_by(keys)
++        else:
++            self._grouped = df._native_frame.group_by(keys)
+ 
+     def agg(self, *aggs: Any, **named_aggs: Any) -> PolarsLazyFrame:
+         aggs, named_aggs = extract_args_kwargs(aggs, named_aggs)  # type: ignore[assignment]
+diff --git a/narwhals/dataframe.py b/narwhals/dataframe.py
+index 4645cfb..a113fef 100644
+--- a/narwhals/dataframe.py
++++ b/narwhals/dataframe.py
+@@ -1867,12 +1867,16 @@ class DataFrame(BaseFrame[DataFrameT]):
+         """
+         return super().filter(*predicates)
+ 
+-    def group_by(self, *keys: str | Iterable[str]) -> GroupBy[Self]:
++    def group_by(
++        self, *keys: str | Iterable[str], drop_null_keys: bool = False
++    ) -> GroupBy[Self]:
+         r"""
+         Start a group by operation.
+ 
+         Arguments:
+             *keys: Column(s) to group by. Accepts multiple columns names as a list.
++            drop_null_keys: if True, then groups where any key is null won't be included
++                in the result.
+ 
+         Returns:
+             GroupBy: Object which can be used to perform aggregations.
+@@ -1941,7 +1945,7 @@ class DataFrame(BaseFrame[DataFrameT]):
+         """
+         from narwhals.group_by import GroupBy
+ 
+-        return GroupBy(self, *flatten(keys))
++        return GroupBy(self, *flatten(keys), drop_null_keys=drop_null_keys)
+ 
+     def sort(
+         self,
+@@ -3758,7 +3762,9 @@ class LazyFrame(BaseFrame[FrameT]):
+         """
+         return super().filter(*predicates)
+ 
+-    def group_by(self, *keys: str | Iterable[str]) -> LazyGroupBy[Self]:
++    def group_by(
++        self, *keys: str | Iterable[str], drop_null_keys: bool = False
++    ) -> LazyGroupBy[Self]:
+         r"""
+         Start a group by operation.
+ 
+@@ -3766,6 +3772,8 @@ class LazyFrame(BaseFrame[FrameT]):
+             *keys:
+                 Column(s) to group by. Accepts expression input. Strings are
+                 parsed as column names.
++            drop_null_keys: if True, then groups where any key is null won't be
++                included in the result.
+ 
+         Examples:
+             Group by one column and call `agg` to compute the grouped sum of
+@@ -3858,7 +3866,7 @@ class LazyFrame(BaseFrame[FrameT]):
+         """
+         from narwhals.group_by import LazyGroupBy
+ 
+-        return LazyGroupBy(self, *flatten(keys))
++        return LazyGroupBy(self, *flatten(keys), drop_null_keys=drop_null_keys)
+ 
+     def sort(
+         self,
+diff --git a/narwhals/group_by.py b/narwhals/group_by.py
+index 797442e..9ec14c4 100644
+--- a/narwhals/group_by.py
++++ b/narwhals/group_by.py
+@@ -20,10 +20,12 @@ LazyFrameT = TypeVar("LazyFrameT")
+ 
+ 
+ class GroupBy(Generic[DataFrameT]):
+-    def __init__(self, df: DataFrameT, *keys: str) -> None:
++    def __init__(self, df: DataFrameT, *keys: str, drop_null_keys: bool) -> None:
+         self._df = cast(DataFrame[Any], df)
+         self._keys = keys
+-        self._grouped = self._df._compliant_frame.group_by(*self._keys)
++        self._grouped = self._df._compliant_frame.group_by(
++            *self._keys, drop_null_keys=drop_null_keys
++        )
+ 
+     def agg(
+         self, *aggs: IntoExpr | Iterable[IntoExpr], **named_aggs: IntoExpr
+@@ -119,10 +121,12 @@ class GroupBy(Generic[DataFrameT]):
+ 
+ 
+ class LazyGroupBy(Generic[LazyFrameT]):
+-    def __init__(self, df: LazyFrameT, *keys: str) -> None:
++    def __init__(self, df: LazyFrameT, *keys: str, drop_null_keys: bool) -> None:
+         self._df = cast(LazyFrame[Any], df)
+         self._keys = keys
+-        self._grouped = self._df._compliant_frame.group_by(*self._keys)
++        self._grouped = self._df._compliant_frame.group_by(
++            *self._keys, drop_null_keys=drop_null_keys
++        )
+ 
+     def agg(
+         self, *aggs: IntoExpr | Iterable[IntoExpr], **named_aggs: IntoExpr
+diff --git a/tests/group_by_test.py b/tests/group_by_test.py
+index ed3444f..2137f97 100644
+--- a/tests/group_by_test.py
++++ b/tests/group_by_test.py
+@@ -256,6 +256,19 @@ def test_key_with_nulls(
+         assert_equal_data(result, expected)
+ 
+ 
++def test_key_with_nulls_ignored(constructor: Constructor) -> None:
++    data = {"b": [4, 5, None], "a": [1, 2, 3]}
++    result = (
++        nw.from_native(constructor(data))
++        .group_by("b", drop_null_keys=True)
++        .agg(nw.len(), nw.col("a").min())
++        .sort("a")
++        .with_columns(nw.col("b").cast(nw.Float64))
++    )
++    expected = {"b": [4.0, 5], "len": [1, 1], "a": [1, 2]}
++    assert_equal_data(result, expected)
++
++
+ def test_no_agg(constructor: Constructor) -> None:
+     result = nw.from_native(constructor(data)).group_by(["a", "b"]).agg().sort("a", "b")
+ 

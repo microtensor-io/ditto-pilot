@@ -1,0 +1,91 @@
+{
+ "type": "result",
+ "subtype": "success",
+ "is_error": false,
+ "api_error_status": null,
+ "duration_ms": 85729,
+ "duration_api_ms": 62594,
+ "ttft_ms": 1702,
+ "num_turns": 29,
+ "result": "Boolean arrays now work in square-bracket indexing, but I couldn't run my own check of the issue scenario because the sandbox blocked it. The existing tests in `tests/v3/test_indexing.py` and `tests/v3/test_array.py` pass (60 passed, 5 expected failures that were already marked xfail).\n\n- **`src/zarr/indexing.py`:** `is_pure_orthogonal_indexing` now accepts a 1-D boolean array, alone or as one element of a tuple alongside slices and integers. For example, `z[mask_1d, :3]` is treated as an orthogonal selection.\n- **`src/zarr/array.py`:** `__getitem__` and `__setitem__` send a boolean array with the same number of dimensions as the array (for example a full 2-D mask) to the mask-selection path.\n\nThe check I couldn't run covered a 2-D mask, a 1-D mask on a 2-D array, a mask combined with a slice, assigning through a mask, and a 1-D mask on a 1-D array. It compared each result against plain NumPy.",
+ "stop_reason": "end_turn",
+ "session_id": "296e0669-65c3-4283-b0ce-e52eb4c27cb0",
+ "total_cost_usd": 1.03101825,
+ "usage": {
+  "input_tokens": 1902,
+  "cache_creation_input_tokens": 37001,
+  "cache_read_input_tokens": 1051674,
+  "output_tokens": 7953,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 37001
+  },
+  "inference_geo": "global",
+  "iterations": [],
+  "speed": "standard"
+ },
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 11935,
+   "outputTokens": 8570,
+   "cacheReadInputTokens": 1051674,
+   "cacheCreationInputTokens": 37001,
+   "webSearchRequests": 0,
+   "costUSD": 1.03101825,
+   "contextWindow": 200000,
+   "maxOutputTokens": 32000
+  }
+ },
+ "permission_denials": [
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_016n97F9ANB4esGUqfTudzju",
+   "tool_input": {
+    "command": "python - <<'EOF'\nimport re\np='src/zarr/indexing.py'\ns=open(p).read()\ns=s.replace(\"\"\"    if is_integer_list(selection) or is_integer_array(selection, ndim=1):\n        return True\n\"\"\",\"\"\"    if is_integer_list(selection) or is_integer_array(selection, ndim=1):\n        return True\n    if is_bool_array(selection, ndim=1):\n        return True\n\"\"\")\ns=s.replace(\"\"\"        and sum(is_integer_list(elem) or is_integer_array(elem) for elem in selection) <= 1\n        and all(\n            is_integer_list(elem) or is_integer_array(elem) or isinstance(elem, int | slice)\n            for elem in selection\n        )\"\"\",\"\"\"        and sum(\n            is_integer_list(elem) or is_integer_array(elem) or is_bool_array(elem, ndim=1)\n            for elem in selection\n        )\n        <= 1\n        and all(\n            is_integer_list(elem)\n            or is_integer_array(elem)\n            or is_bool_array(elem, ndim=1)\n            or isinstance(elem, int | slice)\n            for elem in selection\n        )\"\"\")\nopen(p,'w').write(s)\np='src/zarr/array.py'\ns=open(p).read()\ns=s.replace(\"\"\"        if is_pure_fancy_indexing(pure_selection, self.ndim):\n            return self.vindex\"\"\",\"\"\"        if is_pure_fancy_indexing(pure_selection, self.ndim) or (\n            self.ndim > 1 and is_bool_array(pure_selection, ndim=self.ndim)\n        ):\n            return self.vindex\"\"\")\ns=s.replace(\"\"\"        if is_pure_fancy_indexing(pure_selection, self.ndim):\n            self.vindex[\"\"\",\"\"\"        if is_pure_fancy_indexing(pure_selection, self.ndim) or (\n            self.ndim > 1 and is_bool_array(pure_selection, ndim=self.ndim)\n        ):\n            self.vindex[\"\"\")\nopen(p,'w').write(s)\nEOF\ngrep -n \"is_pure_fancy_indexing\" src/zarr/array.py | head -3"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01QykcMnsqCMVwXrT93P7Hnz",
+   "tool_input": {
+    "command": "cat > /tmp/t.py <<'EOF'\nimport numpy as np\nfrom zarr.array import Array\nfrom zarr.store import MemoryStore, StorePath\nfor shape,chunks in [((10,),(2,)),((6,8),(2,3))]:\n    data=np.arange(np.prod(shape)).reshape(shape)\n    z=Array.create(StorePath(MemoryStore(mode=\"w\")),shape=shape,chunk_shape=chunks,dtype=data.dtype)\n    z[:]=data\n    ix=np.random.binomial(1,.6,size=shape[0]).astype(bool)\n    assert (z[ix]==data[ix]).all()\n    if len(shape)>1:\n        iy=np.random.binomial(1,.6,size=shape[1]).astype(bool)\n        assert (z[:,iy]==data[:,iy]).all()\n        assert (z[1,iy]==data[1,iy]).all()\n        m=data%3==0\n        assert (z[m]==data[m]).all()\n        z[m]=-1; data[m]=-1; assert (z[:]==data).all()\n    else:\n        z[ix]=-1; data[ix]=-1; assert (z[:]==data).all()\nprint(\"ok\")\nEOF\npython /tmp/t.py && python -m pytest tests/v3/test_indexing.py tests/v3/test_array.py -q 2>&1 | tail -3"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01JqxonNDV7Bwzjh9aJbrm7L",
+   "tool_input": {
+    "command": "ls /tmp/t.py; python -m pytest tests/v3/test_indexing.py tests/v3/test_array.py -q 2>&1 | tail -3"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01CeccHAXHJx7X9G3rixVUHd",
+   "tool_input": {
+    "command": "git status --short; git diff; cat /tmp/t.py 2>/dev/null | head -40"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01SumfeLUCc6uVvaHEqKVWZn",
+   "tool_input": {
+    "command": "python - <<'EOF'\nimport numpy as np, zarr\na = zarr.array(np.arange(10), chunks=(5,)) if hasattr(zarr,'array') else None\nprint(a)\nEOF\npython - <<'EOF'\nimport numpy as np\nfrom zarr.store import MemoryStore\nfrom zarr.array import Array\nimport asyncio\nz = Array.create(MemoryStore(), shape=(10,6), chunks=(5,3), dtype=\"i4\", fill_value=0)\nn = np.arange(60).reshape(10,6)\nz[:] = n\nm = n % 2 == 0\nassert (z[m] == n[m]).all()\nr = np.arange(10)%2==0\nassert (z[r] == n[r]).all()\nassert (z[r, :3] == n[r, :3]).all()\nz[m] = -1; n[m] = -1\nassert (z[:] == n).all()\nz1 = Array.create(MemoryStore(), shape=(10,), chunks=(5,), dtype=\"i4\", fill_value=0)\nz1[:] = np.arange(10)\nassert (z1[r] == np.arange(10)[r]).all()\nprint(\"ok\")\nEOF"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_015RMeUvzyPrQKmMAChbJEMN",
+   "tool_input": {
+    "command": "python -c \"\nimport numpy as np\nfrom zarr.store import MemoryStore\nfrom zarr.array import Array\nz = Array.create(MemoryStore(), shape=(10,6), chunks=(5,3), dtype='i4', fill_value=0)\nn = np.arange(60).reshape(10,6)\nz[:] = n\nm = n % 2 == 0\nassert (z[m] == n[m]).all()\nr = np.arange(10)%2==0\nassert (z[r] == n[r]).all()\nassert (z[r, :3] == n[r, :3]).all()\nz[m] = -1; n[m] = -1\nassert (z[:] == n).all()\nz1 = Array.create(MemoryStore(), shape=(10,), chunks=(5,), dtype='i4', fill_value=0)\nz1[:] = np.arange(10)\nassert (z1[r] == np.arange(10)[r]).all()\nprint('ok')\n\""
+   }
+  }
+ ],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "uuid": "19325abf-c96b-4556-80a9-a4310eaa40c1"
+}

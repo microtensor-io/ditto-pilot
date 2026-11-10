@@ -4,9 +4,46 @@ Ditto's router sorts every request a coding harness sends (Claude Code, Codex) b
 
 Nothing here needs Ditto's private backend. It builds against Ditto's public router contract (`ditto-subnet/docs/router-compression-competition-v1.md`), so the same lever can later run inside their gateway in shadow mode.
 
+## Live Claude Code run, 2026-11-10
+
+**Result: coding tasks still finish when compaction goes to Microtensor.** On the three tasks where both arms compacted, the router on arm passed 3 of 3 and the router off arm 2 of 3. Every one of the 10 compactions sent to Microtensor answered, at $0.005 and a median of 6.7 s each, against $0.05 to $0.08 and 23 s on Sonnet.
+
+| Arm | Tasks passed | Average cost per task | Average time per task | Compactions |
+|---|---|---|---|---|
+| A: router off, all Claude | 2 of 3 | $1.28 | 3.8 min | 11 |
+| B: router on, compaction to Microtensor | 3 of 3 | $1.10 | 3.6 min | 10 |
+
+![Tasks passed per arm](results/live/charts/tasks_passed.png)
+
+![Cost per task per arm](results/live/charts/cost_per_task.png)
+
+How it ran:
+
+- **Machine.** One throwaway RunPod pod (RTX 5090, community) running the relay, both routers of the fork, the `mt/ctx_compress` card and Claude Code. The pod was deleted at the end. The card was admitted by hand because no admission probe had run after 15 minutes.
+- **Claude Code.** Version 2.1.159, `claude -p` with `--output-format json`, `--max-turns 150` and `--model claude-sonnet-5-5` in both arms, run as an unprivileged user with a clean environment. Arm A sets `ANTHROPIC_BASE_URL` to the router with the lever off (port 8081), arm B to the router with the lever on (port 8082). Every call goes through the relay and is logged.
+- **Tools.** `Read, Edit, Write, Glob, Grep, Bash(python -m pytest:*)`. Glob and Grep are read only and were added so the agent can find files.
+- **Compaction trigger.** Claude Code 2.1.159 only compacts automatically when the window is set. `CLAUDE_CODE_AUTO_COMPACT_WINDOW=100000`, its lowest value, makes it compact at about 67K tokens. A first attempt at about 100K did not compact on the first task, whose context peaked at 83K, so it was stopped (`results/live/run/attempt1`).
+- **Tasks.** Real Python repositories from the public SWE-rebench set, each with a failing test to fix. Ditto's practice tasks are one file fixes and their grader needs Docker, which the pod lacks. Each task gets a fresh checkout. The hidden tests are the task's test patch, applied only after the session ends. A task passes when every failing test passes and every test that passes with the reference fix still passes. Before any session, the pod checks that the reference fix passes those tests.
+- **Counting.** A task counts only when both arms compacted. zarr and anyio did not (arm A stopped early in both, once its commands outside pytest were refused), and pint was skipped because its reference fix fails in this environment. Their rows are in the CSV, marked not counted.
+
+What the compactions looked like (counted tasks, relay log):
+
+| | Sonnet 5.5, arm A | Microtensor, arm B |
+|---|---|---|
+| Compaction requests | 11, all answered | 10, all answered |
+| Median time | 23.0 s | 6.7 s |
+| Median summary length | 4,242 tokens | 867 tokens |
+| Cost per compaction | $0.05 to $0.08 | $0.005 |
+
+The gateway renders the session before the model sees it and keeps only the head and tail of long tool output, so the Microtensor model saw a median of 6,458 tokens against 67,769 for Sonnet. Its summaries are shorter, and on narwhals the router on session compacted more often (4 against 2) and took more turns (84 against 65). It still passed. Fallbacks were off and no request failed.
+
+Three tasks is a small sample: this shows that sessions keep working with Microtensor compaction, not that one arm is better. Anthropic spend for the run was $9.87 at list price ($1.40 of it in the stopped first attempt).
+
+Files: `results/live/sessions.csv` (one row per session), `results/live/summary.md`, `results/live/charts/`, `results/live/run/` (relay log, session log, run log), `results/live/transcripts/<task>-<arm>/` (Claude Code transcript, final result, workspace diff). Code: `live/run.py` (runs on the pod), `live/tasks.json` (the eight candidate tasks), `live/report.py`.
+
 ## Replay bench results
 
-Router fork: [microtensor-io/ditto-subnet, branch `microtensor-route-table`](https://github.com/microtensor-io/ditto-subnet/tree/microtensor-route-table/miners/dittobench-router-starter-kit). Every item side by side: the private Hugging Face dataset `microtensor-io/ditto-pilot-results`.
+Router fork: [microtensor-io/ditto-subnet, branch `microtensor-route-table`](https://github.com/microtensor-io/ditto-subnet/tree/microtensor-route-table/miners/dittobench-router-starter-kit). Every item side by side: the Hugging Face dataset `microtensor-io/ditto-pilot-results`.
 
 Each of the 36 sessions from Woolford's compaction study replication package (MIT) becomes the compaction request Claude Code sends: the conversation as user, assistant, tool use and tool result turns, then Claude Code's own compaction instruction (`replay/claude_code_compact_instruction.txt`) with `max_tokens` 20000. Each request goes through the router fork three ways: lever off to Claude Haiku 5.5, lever off to Claude Sonnet 5.5, and lever on, which sends compaction to `mt/ctx_compress`. Title requests (Claude Code's title shape, our wording) and three normal turns go through the same way. Summaries are graded with the arena grader used in microtensor-comparisons exp1 and exp2, after Claude Code's numbered summary is mapped back to the nine headings. Cost comes from the relay log at the prices in `catalog.json`; time is measured at the client, request to last byte.
 

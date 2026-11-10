@@ -1,0 +1,70 @@
+{
+ "type": "result",
+ "subtype": "success",
+ "is_error": false,
+ "api_error_status": null,
+ "duration_ms": 60330,
+ "duration_api_ms": 27981,
+ "ttft_ms": 1876,
+ "num_turns": 12,
+ "result": "I fixed the dropped item in `MemoryObjectReceiveStream.receive()` in `src/anyio/streams/memory.py`. I did not manage to run your repro snippet, because the shell asked for approval and it was never run.\n\nWhen a receiver is cancelled after a sender has already handed it an item, `receive()` now swallows that cancellation and returns the item. The cancellation is delivered again at the receiver's next checkpoint, so it is deferred rather than lost. If no item was handed over, the cancellation propagates as before.\n\nOne consequence: in your repro the item is now received by task B, so `receive.receive_nowait()` in `main` would still raise `WouldBlock`. If you wanted the item left in the stream's buffer instead, this approach doesn't do that.\n\nI ran `tests/streams` and `tests/test_taskgroups.py`. 413 passed and one failed: `test_task_group_in_generator[trio]`, with a Trio \"Nursery stack corrupted\" error. That test doesn't use memory streams. I did not check whether it also fails without my change.\n\nI haven't added a regression test for the cancelled-receiver case.",
+ "stop_reason": "end_turn",
+ "session_id": "692d582c-794d-450e-8b46-9f2af635ac45",
+ "total_cost_usd": 0.4793905,
+ "usage": {
+  "input_tokens": 1604,
+  "cache_creation_input_tokens": 18878,
+  "cache_read_input_tokens": 536316,
+  "output_tokens": 3409,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 18878
+  },
+  "inference_geo": "global",
+  "iterations": [],
+  "speed": "standard"
+ },
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 1604,
+   "outputTokens": 3409,
+   "cacheReadInputTokens": 536316,
+   "cacheCreationInputTokens": 18878,
+   "webSearchRequests": 0,
+   "costUSD": 0.4793905,
+   "contextWindow": 200000,
+   "maxOutputTokens": 32000
+  }
+ },
+ "permission_denials": [
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01XKJ7thEc4tvy3BG86uGhyn",
+   "tool_input": {
+    "command": "cat > /tmp/t.py <<'EOF'\nimport anyio\nfrom anyio import CancelScope, create_memory_object_stream, create_task_group, wait_all_tasks_blocked\ngot=[]\nasync def receiver(receive, task_status):\n    with CancelScope() as cs:\n        task_status.started(cs)\n        got.append(await receive.receive())\nasync def main():\n    send, receive = create_memory_object_stream(1)\n    with send, receive:\n        async with create_task_group() as tg:\n            cs = await tg.start(receiver, receive)\n            await wait_all_tasks_blocked()\n            cs.cancel()\n            send.send_nowait(\"item\")\n    print(got)\nfor b in (\"asyncio\",\"trio\"):\n    anyio.run(main, backend=b)\nEOF\npython /tmp/t.py; python -m pytest tests/streams tests/test_taskgroups.py -q 2>&1 | tail -3"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01L8QspLRt7kW6dRQC7VSQam",
+   "tool_input": {
+    "command": "python -m pytest tests/streams tests/test_taskgroups.py -q 2>&1 | grep -E \"^(FAILED|E )\" | head; git stash -q; python -m pytest tests/streams tests/test_taskgroups.py -q 2>&1 | tail -1; git stash pop"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_019jc9ErpijyUtMbPE7m1qWq",
+   "tool_input": {
+    "command": "python - <<'EOF'\nimport anyio\nfrom anyio import CancelScope, create_memory_object_stream, create_task_group, wait_all_tasks_blocked\ngot=[]\nasync def receiver(receive, task_status):\n    with CancelScope() as cs:\n        task_status.started(cs)\n        got.append(await receive.receive())\nasync def main():\n    send, receive = create_memory_object_stream(1)\n    with send, receive:\n        async with create_task_group() as tg:\n            cs = await tg.start(receiver, receive)\n            await wait_all_tasks_blocked()\n            cs.cancel()\n            send.send_nowait(\"item\")\n    print(got)\nfor b in (\"asyncio\",\"trio\"):\n    anyio.run(main, backend=b)\nEOF"
+   }
+  }
+ ],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "uuid": "957853b5-9a75-44fb-9fa9-8af2ff3f442d"
+}

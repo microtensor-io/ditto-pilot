@@ -149,7 +149,13 @@ class Relay:
         input_tokens = meter.input_tokens if meter else 0
         cached = meter.cached_tokens if meter else 0
         output = meter.output_tokens if meter else 0
-        cost = route.cost_micros(input_tokens, cached, output) if route and status < 400 else 0
+        written = meter.written_tokens if meter else 0
+        written_long = meter.written_long_tokens if meter else 0
+        cost = (
+            route.cost_micros(input_tokens, cached, output, written, written_long)
+            if route and status < 400
+            else 0
+        )
         return {
             "ts": dt.datetime.now(dt.UTC).isoformat(),
             "run_id": self.labels["run_id"],
@@ -164,6 +170,8 @@ class Relay:
             "stand_in": route.stand_in if route else False,
             "input_tokens": input_tokens,
             "cached_tokens": cached,
+            "cache_write_tokens": written,
+            "cache_write_1h_tokens": written_long,
             "output_tokens": output,
             "cost_usd_micros": cost,
             "first_byte_ms": meter.ms(meter.first_byte) if meter else None,

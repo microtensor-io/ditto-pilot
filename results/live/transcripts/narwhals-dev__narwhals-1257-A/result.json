@@ -1,0 +1,57 @@
+{
+ "type": "result",
+ "subtype": "success",
+ "is_error": false,
+ "api_error_status": null,
+ "duration_ms": 216377,
+ "duration_api_ms": 151990,
+ "ttft_ms": 3998,
+ "num_turns": 65,
+ "result": "`DataFrame.group_by` and `LazyFrame.group_by` now take a `drop_null_keys` keyword that defaults to `False`. Setting it to `True` leaves out any group whose key contains a null. The new tests and the rest of `tests/group_by_test.py` pass (99 passed).\n\nThe full suite has 13 failures and the doctests 8, all in Schema, `is_ordered_categorical`, `sample`, `item`, name suffix/map and DuckDB interchange tests. None involve group_by. I didn't run the suite before my changes, so I haven't confirmed they were already failing.\n\nHow each backend handles it:\n- **pandas-like and Dask:** passes `dropna=drop_null_keys` to the native `groupby`, which is the fast pandas path from the issue. On old pandas (below 1.1) the null-key `NotImplementedError` is skipped when `drop_null_keys=True`.\n- **Polars and PyArrow:** drops the null-key rows before grouping.\n- **Dask `.agg()` with no expressions:** now drops null-key rows when the flag is set.\n- **Internal calls:** the pandas-like, Arrow and Dask `expr.py` files pass `drop_null_keys=False`.\n\nI added three tests to `tests/group_by_test.py`: null keys dropped with aggregations, null keys dropped with no aggregations, and iteration over groups with `drop_null_keys` both on and off.",
+ "stop_reason": "end_turn",
+ "session_id": "f26bd084-bc78-49ee-b0e0-2529a2805d76",
+ "total_cost_usd": 1.8755964999999999,
+ "usage": {
+  "input_tokens": 14886,
+  "cache_creation_input_tokens": 72742,
+  "cache_read_input_tokens": 1364472,
+  "output_tokens": 14202,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 72742
+  },
+  "inference_geo": "global",
+  "iterations": [],
+  "speed": "standard"
+ },
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 19508,
+   "outputTokens": 22606,
+   "cacheReadInputTokens": 1494388,
+   "cacheCreationInputTokens": 74514,
+   "webSearchRequests": 0,
+   "costUSD": 1.8755964999999999,
+   "contextWindow": 200000,
+   "maxOutputTokens": 32000
+  }
+ },
+ "permission_denials": [
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01HCFHBsnPdMGAijjQnVbmD3",
+   "tool_input": {
+    "command": "python -m pytest tests -q -x 2>&1 | tail -8; git stash -q; python -m pytest narwhals --doctest-modules -q 2>&1 | tail -2; git stash pop -q",
+    "timeout": 600000
+   }
+  }
+ ],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "uuid": "ab523ab2-a6b8-4490-abcf-e6b2554772fe"
+}

@@ -1,0 +1,25 @@
+diff --git a/src/anyio/streams/memory.py b/src/anyio/streams/memory.py
+index 8fd94f4..407062f 100644
+--- a/src/anyio/streams/memory.py
++++ b/src/anyio/streams/memory.py
+@@ -11,6 +11,7 @@ from .. import (
+     ClosedResourceError,
+     EndOfStream,
+     WouldBlock,
++    get_cancelled_exc_class,
+ )
+ from ..abc import Event, ObjectReceiveStream, ObjectSendStream
+ from ..lowlevel import checkpoint
+@@ -104,6 +105,12 @@ class MemoryObjectReceiveStream(Generic[T_co], ObjectReceiveStream[T_co]):
+ 
+             try:
+                 await receive_event.wait()
++            except get_cancelled_exc_class():
++                # If an item was already handed to us, swallow the cancellation so the
++                # item isn't lost; the cancellation is re-delivered at the next
++                # checkpoint
++                if not container:
++                    raise
+             finally:
+                 self._state.waiting_receivers.pop(receive_event, None)
+ 

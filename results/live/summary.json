@@ -1,0 +1,20 @@
+[
+  {
+    "arm": "A",
+    "label": "A: router off, all Claude",
+    "tasks": 3,
+    "passed": 2,
+    "mean_cost_usd": 1.2811,
+    "mean_time_min": 3.8,
+    "compactions": 11
+  },
+  {
+    "arm": "B",
+    "label": "B: router on, compaction to Microtensor",
+    "tasks": 3,
+    "passed": 3,
+    "mean_cost_usd": 1.0963,
+    "mean_time_min": 3.6,
+    "compactions": 10
+  }
+]

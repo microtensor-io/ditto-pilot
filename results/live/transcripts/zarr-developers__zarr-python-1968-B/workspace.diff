@@ -1,0 +1,66 @@
+diff --git a/src/zarr/array.py b/src/zarr/array.py
+index 4318050..517ba00 100644
+--- a/src/zarr/array.py
++++ b/src/zarr/array.py
+@@ -55,6 +55,7 @@ from zarr.indexing import (
+     VIndex,
+     check_fields,
+     check_no_multi_fields,
++    is_bool_array,
+     is_pure_fancy_indexing,
+     is_pure_orthogonal_indexing,
+     is_scalar,
+@@ -877,7 +878,9 @@ class Array:
+ 
+         """
+         fields, pure_selection = pop_fields(selection)
+-        if is_pure_fancy_indexing(pure_selection, self.ndim):
++        if is_pure_fancy_indexing(pure_selection, self.ndim) or (
++            self.ndim > 1 and is_bool_array(pure_selection, ndim=self.ndim)
++        ):
+             return self.vindex[cast(CoordinateSelection | MaskSelection, selection)]
+         elif is_pure_orthogonal_indexing(pure_selection, self.ndim):
+             return self.get_orthogonal_selection(pure_selection, fields=fields)
+@@ -976,7 +979,9 @@ class Array:
+ 
+         """
+         fields, pure_selection = pop_fields(selection)
+-        if is_pure_fancy_indexing(pure_selection, self.ndim):
++        if is_pure_fancy_indexing(pure_selection, self.ndim) or (
++            self.ndim > 1 and is_bool_array(pure_selection, ndim=self.ndim)
++        ):
+             self.vindex[cast(CoordinateSelection | MaskSelection, selection)] = value
+         elif is_pure_orthogonal_indexing(pure_selection, self.ndim):
+             self.set_orthogonal_selection(pure_selection, value, fields=fields)
+diff --git a/src/zarr/indexing.py b/src/zarr/indexing.py
+index 29b6dd7..043df2f 100644
+--- a/src/zarr/indexing.py
++++ b/src/zarr/indexing.py
+@@ -169,15 +169,24 @@ def is_pure_orthogonal_indexing(selection: Selection, ndim: int) -> TypeGuard[Or
+     # Case 1: Selection is a single iterable of integers
+     if is_integer_list(selection) or is_integer_array(selection, ndim=1):
+         return True
++    if is_bool_array(selection, ndim=1):
++        return True
+ 
+-    # Case two: selection contains either zero or one integer iterables.
++    # Case two: selection contains either zero or one integer/bool iterables.
+     # All other selection elements are slices or integers
+     return (
+         isinstance(selection, tuple)
+         and len(selection) == ndim
+-        and sum(is_integer_list(elem) or is_integer_array(elem) for elem in selection) <= 1
++        and sum(
++            is_integer_list(elem) or is_integer_array(elem) or is_bool_array(elem, ndim=1)
++            for elem in selection
++        )
++        <= 1
+         and all(
+-            is_integer_list(elem) or is_integer_array(elem) or isinstance(elem, int | slice)
++            is_integer_list(elem)
++            or is_integer_array(elem)
++            or is_bool_array(elem, ndim=1)
++            or isinstance(elem, int | slice)
+             for elem in selection
+         )
+     )

@@ -1,0 +1,7 @@
+task_id,arm,total_cost_usd
+narwhals-dev__narwhals-1257,"A: router off, all Claude",0.977
+narwhals-dev__narwhals-1257,"B: router on, compaction to Microtensor",1.1041
+RDFLib__rdflib-2221,"A: router off, all Claude",0.5682
+RDFLib__rdflib-2221,"B: router on, compaction to Microtensor",0.6941
+idaholab__MontePy-680,"A: router off, all Claude",2.2982
+idaholab__MontePy-680,"B: router on, compaction to Microtensor",1.4908

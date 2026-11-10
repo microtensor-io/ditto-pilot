@@ -1,0 +1,79 @@
+{
+ "type": "result",
+ "subtype": "success",
+ "is_error": false,
+ "api_error_status": null,
+ "duration_ms": 117768,
+ "duration_api_ms": 88346,
+ "ttft_ms": 1923,
+ "num_turns": 32,
+ "result": "`DESCRIBE` now works for both cases from the issue. I checked the first two queries below with the new tests in `test/test_sparql/test_describe.py`, all four of which pass.\n\n- **No WHERE clause:** `g.query('DESCRIBE http://www.example.org/a')` no longer crashes in `translate`. A missing WHERE is treated as an empty pattern.\n- **With a WHERE clause:** `DESCRIBE ?s WHERE {...}` no longer raises \"DESCRIBE not implemented\". Both queries return a graph with `r.type == \"DESCRIBE\"`.\n- **How it's described:** Each resource gets a concise bounded description. That is every triple with it as subject, following blank-node objects recursively. It handles IRIs, variables and `*`, alone or combined.\n\nThe `test/test_sparql` and `test/test_w3c_spec` suites show no failures (2277 passed, 228 xfailed, 1 xpassed). I excluded `test_service.py`, which needs network access to DBpedia and returned no results earlier. The changes are in `rdflib/plugins/sparql/algebra.py` and `rdflib/plugins/sparql/evaluate.py`.",
+ "stop_reason": "end_turn",
+ "session_id": "b0ff16b9-434b-4f86-8597-a491b94350ff",
+ "total_cost_usd": 1.1362587500000003,
+ "usage": {
+  "input_tokens": 3827,
+  "cache_creation_input_tokens": 44356,
+  "cache_read_input_tokens": 949099,
+  "output_tokens": 9798,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 44356
+  },
+  "inference_geo": "global",
+  "iterations": [],
+  "speed": "standard"
+ },
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 5937,
+   "outputTokens": 12864,
+   "cacheReadInputTokens": 1013860,
+   "cacheCreationInputTokens": 44487,
+   "webSearchRequests": 0,
+   "costUSD": 1.1362587500000003,
+   "contextWindow": 200000,
+   "maxOutputTokens": 32000
+  }
+ },
+ "permission_denials": [
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01U7HV4PpqgBQh4qhhdhGhGQ",
+   "tool_input": {
+    "command": "python - <<'EOF'\nimport rdflib\nfrom rdflib import RDF, BNode\nex = rdflib.Namespace('http://www.example.org/')\ng = rdflib.Graph()\ng.add((ex['a'], RDF['type'], ex['Cl']))\nb=BNode(); g.add((ex.a, ex.p, b)); g.add((b, ex.q, ex.z)); g.add((ex.c, ex.q, ex.z))\nfor q in ['DESCRIBE <http://www.example.org/a>',\n 'DESCRIBE ?s WHERE {?s ?p ?o FILTER (?s = <http://www.example.org/a>)}',\n 'DESCRIBE * WHERE {?s <http://www.example.org/q> <http://www.example.org/z> . FILTER(isIRI(?s))}',\n 'DESCRIBE <http://www.example.org/c> ?s WHERE {?s a ?o}']:\n    r=g.query(q); print(r.type, len(r.graph), len(list(r)))\nEOF\npython -m pytest test/test_sparql test/test_w3c_spec -q -x 2>&1 | tail -5"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01W7GmBaBdnL8sSQgbXtM715",
+   "tool_input": {
+    "command": "python /tmp/describe_check.py"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01Jyjv4KtCaJgHRByMEfZG2d",
+   "tool_input": {
+    "command": "python /tmp/describe_check.py 2>&1 | grep -v Warning | tail -20",
+    "description": "Run DESCRIBE verification script"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_012DzGZr6bHm1WFroxqpgWFh",
+   "tool_input": {
+    "command": "python /tmp/describe_check.py",
+    "description": "Run DESCRIBE verification script"
+   }
+  }
+ ],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "uuid": "a9a4a24d-2912-4b94-b204-f9fa6221ea7a"
+}

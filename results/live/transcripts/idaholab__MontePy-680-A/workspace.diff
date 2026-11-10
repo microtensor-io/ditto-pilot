@@ -1,0 +1,567 @@
+diff --git a/montepy/cell.py b/montepy/cell.py
+index e119790..ec9eac0 100644
+--- a/montepy/cell.py
++++ b/montepy/cell.py
+@@ -420,7 +420,7 @@ class Cell(Numbered_MCNP_Object):
+         pass
+ 
+     @make_prop_val_node(
+-        "_density_node", (float, int, type(None)), base_type=float, deletable=True
++        "_density_node", (numbers.Real, type(None)), base_type=float, deletable=True
+     )
+     def _density(self):
+         """
+@@ -442,7 +442,7 @@ class Cell(Numbered_MCNP_Object):
+ 
+     @atom_density.setter
+     def atom_density(self, density: float):
+-        if not isinstance(density, numbers.Number):
++        if not isinstance(density, numbers.Real):
+             raise TypeError("Atom density must be a number.")
+         elif density < 0:
+             raise ValueError("Atom density must be a positive number.")
+@@ -467,7 +467,7 @@ class Cell(Numbered_MCNP_Object):
+ 
+     @mass_density.setter
+     def mass_density(self, density: float):
+-        if not isinstance(density, numbers.Number):
++        if not isinstance(density, numbers.Real):
+             raise TypeError("Mass density must be a number.")
+         elif density < 0:
+             raise ValueError("Mass density must be a positive number.")
+@@ -591,7 +591,7 @@ class Cell(Numbered_MCNP_Object):
+         new_deleting_dict = {}
+ 
+         def get_num(obj):
+-            if isinstance(obj, int):
++            if isinstance(obj, numbers.Integral):
+                 return obj
+             return obj.number
+ 
+@@ -800,11 +800,11 @@ class Cell(Numbered_MCNP_Object):
+             )
+         if not isinstance(clone_region, bool):
+             raise TypeError(f"clone_region must be a boolean. {clone_region} given.")
+-        if not isinstance(starting_number, (int, type(None))):
++        if not isinstance(starting_number, (numbers.Integral, type(None))):
+             raise TypeError(
+                 f"Starting_number must be an int. {type(starting_number)} given."
+             )
+-        if not isinstance(step, (int, type(None))):
++        if not isinstance(step, (numbers.Integral, type(None))):
+             raise TypeError(f"step must be an int. {type(step)} given.")
+         if starting_number is not None and starting_number <= 0:
+             raise ValueError(f"starting_number must be >= 1. {starting_number} given.")
+@@ -832,7 +832,7 @@ class Cell(Numbered_MCNP_Object):
+         memo = {}
+ 
+         def num(obj):
+-            if isinstance(obj, int):
++            if isinstance(obj, numbers.Integral):
+                 return obj
+             return obj.number
+ 
+diff --git a/montepy/cells.py b/montepy/cells.py
+index a6f7799..abf866a 100644
+--- a/montepy/cells.py
++++ b/montepy/cells.py
+@@ -2,6 +2,7 @@
+ import montepy
+ from montepy.numbered_object_collection import NumberedObjectCollection
+ from montepy.errors import *
++import numbers
+ import warnings
+ 
+ 
+@@ -64,10 +65,10 @@ class Cells(NumberedObjectCollection):
+             raise TypeError("vacuum_cells must be a list or set")
+         cells_buff = set()
+         for cell in vacuum_cells:
+-            if not isinstance(cell, (montepy.Cell, int)):
++            if not isinstance(cell, (montepy.Cell, numbers.Integral)):
+                 raise TypeError("vacuum cell must be a Cell or a cell number")
+-            if isinstance(cell, int):
+-                cells_buff.add(self[cell])
++            if isinstance(cell, numbers.Integral):
++                cells_buff.add(self[int(cell)])
+             else:
+                 cells_buff.add(cell)
+         vacuum_cells = cells_buff
+@@ -214,11 +215,11 @@ class Cells(NumberedObjectCollection):
+         :rtype: type(self)
+ 
+         """
+-        if not isinstance(starting_number, (int, type(None))):
++        if not isinstance(starting_number, (numbers.Integral, type(None))):
+             raise TypeError(
+                 f"Starting_number must be an int. {type(starting_number)} given."
+             )
+-        if not isinstance(step, (int, type(None))):
++        if not isinstance(step, (numbers.Integral, type(None))):
+             raise TypeError(f"step must be an int. {type(step)} given.")
+         if starting_number is not None and starting_number <= 0:
+             raise ValueError(f"starting_number must be >= 1. {starting_number} given.")
+diff --git a/montepy/data_inputs/element.py b/montepy/data_inputs/element.py
+index f3443d1..1d61e40 100644
+--- a/montepy/data_inputs/element.py
++++ b/montepy/data_inputs/element.py
+@@ -2,6 +2,7 @@
+ from __future__ import annotations
+ from montepy.errors import *
+ from montepy._singleton import SingletonGroup
++import numbers
+ 
+ MAX_Z_NUM = 118
+ 
+@@ -23,8 +24,9 @@ class Element(SingletonGroup):
+     __slots__ = "_Z"
+ 
+     def __init__(self, Z: int):
+-        if not isinstance(Z, int):
++        if not isinstance(Z, numbers.Integral):
+             raise TypeError(f"Z must be an int. {Z} of type {type(Z)} given.")
++        Z = int(Z)
+         self._Z = Z
+         if Z not in self.__Z_TO_SYMBOL:
+             raise UnknownElement(f"Z={Z}")
+diff --git a/montepy/data_inputs/nuclide.py b/montepy/data_inputs/nuclide.py
+index 22350e6..a1e9472 100644
+--- a/montepy/data_inputs/nuclide.py
++++ b/montepy/data_inputs/nuclide.py
+@@ -9,6 +9,7 @@ from montepy.particle import LibraryType
+ 
+ import collections
+ from functools import total_ordering
++import numbers
+ import re
+ from typing import Union
+ import warnings
+@@ -221,13 +222,16 @@ class Nucleus(SingletonGroup):
+             )
+         self._element = element
+ 
+-        if not isinstance(A, int):
++        if not isinstance(A, numbers.Integral):
+             raise TypeError(f"A number must be an int. {A} given.")
++        A = int(A)
+         if A < 0:
+             raise ValueError(f"A cannot be negative. {A} given.")
+         self._A = A
+-        if not isinstance(meta_state, (int, type(None))):
++        if not isinstance(meta_state, (numbers.Integral, type(None))):
+             raise TypeError(f"Meta state must be an int. {meta_state} given.")
++        if meta_state is not None:
++            meta_state = int(meta_state)
+         if A == 0 and meta_state != 0:
+             raise ValueError(
+                 f"A metastable elemental state is Non-sensical. A: {A}, meta_state: {meta_state} given."
+@@ -487,7 +491,9 @@ class Nuclide:
+         self._library = Library("")
+         ZAID = ""
+ 
+-        if not isinstance(name, (str, int, Element, Nucleus, Nuclide, type(None))):
++        if not isinstance(
++            name, (str, numbers.Integral, Element, Nucleus, Nuclide, type(None))
++        ):
+             raise TypeError(
+                 f"Name must be str, int, Element, or Nucleus. {name} of type {type(name)} given."
+             )
+@@ -739,7 +745,7 @@ class Nuclide:
+         A = 0
+         isomer = 0
+         library = ""
+-        if isinstance(identifier, (int, float)):
++        if isinstance(identifier, numbers.Real):
+             if identifier > _ZAID_A_ADDER:
+                 parts = Nuclide._parse_zaid(int(identifier))
+                 element, A, isomer = (
+diff --git a/montepy/materials.py b/montepy/materials.py
+index 36281d6..bbff58d 100644
+--- a/montepy/materials.py
++++ b/montepy/materials.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ import collections as co
+ import copy
++import numbers
+ from typing import Generator, Union
+ 
+ import montepy
+@@ -292,7 +293,7 @@ class Materials(NumberedDataObjectCollection):
+         if not isinstance(fractions, list):
+             raise TypeError(f"fractions must be a list. {fractions} given.")
+         for frac in fractions:
+-            if not isinstance(frac, float):
++            if not isinstance(frac, numbers.Real):
+                 raise TypeError(f"fraction in fractions must be a float. {frac} given.")
+             if frac < 0.0:
+                 raise ValueError(f"Fraction cannot be negative. {frac} given.")
+@@ -300,7 +301,7 @@ class Materials(NumberedDataObjectCollection):
+             raise ValueError(
+                 f"Length of materials and fractions don't match. The lengths are, materials: {len(materials)}, fractions: {len(fractions)}"
+             )
+-        if not isinstance(starting_number, (int, type(None))):
++        if not isinstance(starting_number, (numbers.Integral, type(None))):
+             raise TypeError(
+                 f"starting_number must be an int. {starting_number} of type {type(starting_number)} given."
+             )
+@@ -308,7 +309,7 @@ class Materials(NumberedDataObjectCollection):
+             raise ValueError(
+                 f"starting_number must be positive. {starting_number} given."
+             )
+-        if not isinstance(step, (int, type(None))):
++        if not isinstance(step, (numbers.Integral, type(None))):
+             raise TypeError(f"step must be an int. {step} of type {type(step)} given.")
+         if step is not None and step <= 0:
+             raise ValueError(f"step must be positive. {step} given.")
+diff --git a/montepy/numbered_mcnp_object.py b/montepy/numbered_mcnp_object.py
+index 31c14d8..59f5f41 100644
+--- a/montepy/numbered_mcnp_object.py
++++ b/montepy/numbered_mcnp_object.py
+@@ -3,6 +3,7 @@ from __future__ import annotations
+ from abc import abstractmethod
+ import copy
+ import itertools
++import numbers
+ from typing import Union
+ 
+ 
+@@ -61,7 +62,7 @@ class Numbered_MCNP_Object(MCNP_Object):
+ 
+     def _load_init_num(self, number):
+         if number is not None:
+-            if not isinstance(number, int):
++            if not isinstance(number, numbers.Integral):
+                 raise TypeError(
+                     f"Number must be an int. {number} of type {type(number)} given."
+                 )
+@@ -73,7 +74,7 @@ class Numbered_MCNP_Object(MCNP_Object):
+     """
+     """
+ 
+-    @make_prop_val_node("_number", int, validator=_number_validator)
++    @make_prop_val_node("_number", numbers.Integral, int, validator=_number_validator)
+     def number(self):
+         """
+         The current number of the object that will be written out to a new input.
+@@ -146,11 +147,11 @@ class Numbered_MCNP_Object(MCNP_Object):
+         :rtype: type(self)
+ 
+         """
+-        if not isinstance(starting_number, (int, type(None))):
++        if not isinstance(starting_number, (numbers.Integral, type(None))):
+             raise TypeError(
+                 f"Starting_number must be an int. {type(starting_number)} given."
+             )
+-        if not isinstance(step, (int, type(None))):
++        if not isinstance(step, (numbers.Integral, type(None))):
+             raise TypeError(f"step must be an int. {type(step)} given.")
+         if starting_number is not None and starting_number <= 0:
+             raise ValueError(f"starting_number must be >= 1. {starting_number} given.")
+diff --git a/montepy/numbered_object_collection.py b/montepy/numbered_object_collection.py
+index fc7b4ab..a4bd0db 100644
+--- a/montepy/numbered_object_collection.py
++++ b/montepy/numbered_object_collection.py
+@@ -2,6 +2,7 @@
+ from __future__ import annotations
+ from abc import ABC, abstractmethod
+ import itertools as it
++import numbers
+ import typing
+ import weakref
+ 
+@@ -229,7 +230,7 @@ class NumberedObjectCollection(ABC):
+         :type number: int
+         :raises NumberConflictError: if this number is in use.
+         """
+-        if not isinstance(number, int):
++        if not isinstance(number, numbers.Integral):
+             raise TypeError("The number must be an int")
+         conflict = False
+         # only can trust cache if being
+@@ -282,7 +283,7 @@ class NumberedObjectCollection(ABC):
+         :return: the final elements
+         :rtype: Numbered_MCNP_Object
+         """
+-        if not isinstance(pos, int):
++        if not isinstance(pos, numbers.Integral):
+             raise TypeError("The index for popping must be an int")
+         obj = self._objects[pos]
+         self.__internal_delete(obj)
+@@ -362,11 +363,11 @@ class NumberedObjectCollection(ABC):
+         :rtype: type(self)
+ 
+         """
+-        if not isinstance(starting_number, (int, type(None))):
++        if not isinstance(starting_number, (numbers.Integral, type(None))):
+             raise TypeError(
+                 f"Starting_number must be an int. {type(starting_number)} given."
+             )
+-        if not isinstance(step, (int, type(None))):
++        if not isinstance(step, (numbers.Integral, type(None))):
+             raise TypeError(f"step must be an int. {type(step)} given.")
+         if starting_number is not None and starting_number <= 0:
+             raise ValueError(f"starting_number must be >= 1. {starting_number} given.")
+@@ -384,7 +385,7 @@ class NumberedObjectCollection(ABC):
+             starting_number = new_obj.number + step
+         return type(self)(objs)
+ 
+-    @make_prop_pointer("_start_num", int, validator=_enforce_positive)
++    @make_prop_pointer("_start_num", numbers.Integral, int, validator=_enforce_positive)
+     def starting_number(self):
+         """
+         The starting number to use when an object is cloned.
+@@ -394,7 +395,7 @@ class NumberedObjectCollection(ABC):
+         """
+         pass
+ 
+-    @make_prop_pointer("_step", int, validator=_enforce_positive)
++    @make_prop_pointer("_step", numbers.Integral, int, validator=_enforce_positive)
+     def step(self):
+         """
+         The step size to use to find a valid number during cloning.
+@@ -550,7 +551,7 @@ class NumberedObjectCollection(ABC):
+         """
+         if not isinstance(obj, self._obj_class):
+             raise TypeError(f"object being appended must be of type: {self._obj_class}")
+-        if not isinstance(step, int):
++        if not isinstance(step, numbers.Integral):
+             raise TypeError("The step number must be an int")
+         number = obj.number
+         if self._problem:
+@@ -585,9 +586,9 @@ class NumberedObjectCollection(ABC):
+         :returns: an available number
+         :rtype: int
+         """
+-        if not isinstance(start_num, (int, type(None))):
++        if not isinstance(start_num, (numbers.Integral, type(None))):
+             raise TypeError("start_num must be an int")
+-        if not isinstance(step, (int, type(None))):
++        if not isinstance(step, (numbers.Integral, type(None))):
+             raise TypeError("step must be an int")
+         if start_num is None:
+             start_num = self.starting_number
+@@ -611,7 +612,7 @@ class NumberedObjectCollection(ABC):
+         :param step: how much to increase the last number by
+         :type step: int
+         """
+-        if not isinstance(step, int):
++        if not isinstance(step, numbers.Integral):
+             raise TypeError("step must be an int")
+         if step <= 0:
+             raise ValueError("step must be > 0")
+@@ -657,7 +658,7 @@ class NumberedObjectCollection(ABC):
+     def __getitem__(self, i):
+         if isinstance(i, slice):
+             return self.__get_slice(i)
+-        elif not isinstance(i, int):
++        elif not isinstance(i, numbers.Integral):
+             raise TypeError("index must be an int or slice")
+         ret = self.get(i)
+         if ret is None:
+@@ -665,13 +666,13 @@ class NumberedObjectCollection(ABC):
+         return ret
+ 
+     def __delitem__(self, idx):
+-        if not isinstance(idx, int):
++        if not isinstance(idx, numbers.Integral):
+             raise TypeError("index must be an int")
+         obj = self[idx]
+         self.__internal_delete(obj)
+ 
+     def __setitem__(self, key, newvalue):
+-        if not isinstance(key, int):
++        if not isinstance(key, numbers.Integral):
+             raise TypeError("index must be an int")
+         self.append(newvalue)
+ 
+diff --git a/montepy/surfaces/axis_plane.py b/montepy/surfaces/axis_plane.py
+index 5c9edb1..af75de2 100644
+--- a/montepy/surfaces/axis_plane.py
++++ b/montepy/surfaces/axis_plane.py
+@@ -1,5 +1,7 @@
+ # Copyright 2024, Battelle Energy Alliance, LLC All Rights Reserved.
+ 
++import numbers
++
+ from .surface_type import SurfaceType
+ from .surface import Surface, InitInput
+ from montepy.errors import *
+@@ -35,7 +37,7 @@ class AxisPlane(Surface):
+         else:
+             self._surface_constants = [self._location]
+ 
+-    @make_prop_val_node("_location", (float, int), float)
++    @make_prop_val_node("_location", numbers.Real, float)
+     def location(self):
+         """
+         The location of the plane in space.
+diff --git a/montepy/surfaces/cylinder_on_axis.py b/montepy/surfaces/cylinder_on_axis.py
+index 93d99f6..681f83f 100644
+--- a/montepy/surfaces/cylinder_on_axis.py
++++ b/montepy/surfaces/cylinder_on_axis.py
+@@ -1,4 +1,6 @@
+ # Copyright 2024, Battelle Energy Alliance, LLC All Rights Reserved.
++import numbers
++
+ from .surface_type import SurfaceType
+ from .surface import Surface, InitInput
+ from montepy.errors import *
+@@ -39,7 +41,7 @@ class CylinderOnAxis(Surface):
+             self._surface_constants = [self._radius]
+ 
+     @make_prop_val_node(
+-        "_radius", (float, int), float, validator=_enforce_positive_radius
++        "_radius", numbers.Real, float, validator=_enforce_positive_radius
+     )
+     def radius(self):
+         """
+diff --git a/montepy/surfaces/cylinder_par_axis.py b/montepy/surfaces/cylinder_par_axis.py
+index 3ada7c5..4b26617 100644
+--- a/montepy/surfaces/cylinder_par_axis.py
++++ b/montepy/surfaces/cylinder_par_axis.py
+@@ -1,4 +1,6 @@
+ # Copyright 2024, Battelle Energy Alliance, LLC All Rights Reserved.
++import numbers
++
+ from .surface_type import SurfaceType
+ from .surface import Surface, InitInput
+ from montepy.errors import *
+@@ -70,13 +72,13 @@ class CylinderParAxis(Surface):
+         if len(coordinates) != 2:
+             raise ValueError("coordinates must have exactly two elements")
+         for val in coordinates:
+-            if not isinstance(val, (float, int)):
++            if not isinstance(val, numbers.Real):
+                 raise TypeError(f"Coordinate must be a number. {val} given.")
+         for i, val in enumerate(coordinates):
+-            self._coordinates[i].value = val
++            self._coordinates[i].value = float(val)
+ 
+     @make_prop_val_node(
+-        "_radius", (float, int), float, validator=_enforce_positive_radius
++        "_radius", numbers.Real, float, validator=_enforce_positive_radius
+     )
+     def radius(self):
+         """
+diff --git a/montepy/surfaces/half_space.py b/montepy/surfaces/half_space.py
+index 6809568..ff268c9 100644
+--- a/montepy/surfaces/half_space.py
++++ b/montepy/surfaces/half_space.py
+@@ -1,5 +1,6 @@
+ # Copyright 2024, Battelle Energy Alliance, LLC All Rights Reserved.
+ from __future__ import annotations
++import numbers
+ import montepy
+ from montepy.errors import *
+ from montepy.geometry_operators import Operator
+@@ -518,11 +519,13 @@ class UnitHalfSpace(HalfSpace):
+ 
+     def __init__(self, divider, side, is_cell, node=None):
+         if not isinstance(
+-            divider, (int, montepy.Cell, montepy.surfaces.surface.Surface)
++            divider, (numbers.Integral, montepy.Cell, montepy.surfaces.surface.Surface)
+         ):
+             raise TypeError(
+                 f"divider must be an int, Cell, or Surface. {divider} given"
+             )
++        if isinstance(divider, numbers.Integral):
++            divider = int(divider)
+         if not isinstance(side, bool):
+             raise TypeError(f"side must be bool. {side} given.")
+         if not isinstance(is_cell, bool):
+@@ -578,7 +581,7 @@ class UnitHalfSpace(HalfSpace):
+                 side = "+"
+         else:
+             side = "-"
+-        if isinstance(self.divider, int):
++        if isinstance(self.divider, numbers.Integral):
+             div = self.divider
+         else:
+             div = self.divider.number
+@@ -643,7 +646,7 @@ class UnitHalfSpace(HalfSpace):
+         if self._is_cell:
+             container = cells
+             par_container = self._cell.complements
+-        if isinstance(self.divider, int):
++        if isinstance(self.divider, numbers.Integral):
+             try:
+                 self._divider = container[self._divider]
+                 if self._divider not in par_container:
+@@ -659,7 +662,7 @@ class UnitHalfSpace(HalfSpace):
+ 
+     def _ensure_has_nodes(self):
+         if self.node is None:
+-            if isinstance(self.divider, int):
++            if isinstance(self.divider, numbers.Integral):
+                 num = self.divider
+             else:
+                 num = self.divider.number
+@@ -670,7 +673,7 @@ class UnitHalfSpace(HalfSpace):
+             self._node = node
+ 
+     def _update_node(self):
+-        if isinstance(self.divider, int):
++        if isinstance(self.divider, numbers.Integral):
+             self._node.value = self.divider
+         else:
+             self._node.value = self.divider.number
+@@ -721,7 +724,7 @@ class UnitHalfSpace(HalfSpace):
+         """
+ 
+         def num(obj):
+-            if isinstance(obj, int):
++            if isinstance(obj, numbers.Integral):
+                 return obj
+             return obj.number
+ 
+diff --git a/montepy/surfaces/surface.py b/montepy/surfaces/surface.py
+index 856a0bb..d7c0e59 100644
+--- a/montepy/surfaces/surface.py
++++ b/montepy/surfaces/surface.py
+@@ -1,6 +1,7 @@
+ # Copyright 2024, Battelle Energy Alliance, LLC All Rights Reserved.
+ from __future__ import annotations
+ import copy
++import numbers
+ import re
+ from typing import Union
+ 
+@@ -156,12 +157,12 @@ class Surface(Numbered_MCNP_Object):
+         if len(constants) != len(self._surface_constants):
+             raise ValueError(f"Cannot change the length of the surface constants.")
+         for constant in constants:
+-            if not isinstance(constant, float):
++            if not isinstance(constant, numbers.Real):
+                 raise TypeError(
+                     f"The surface constant provided: {constant} must be a float"
+                 )
+         for i, value in enumerate(constants):
+-            self._surface_constants[i].value = value
++            self._surface_constants[i].value = float(value)
+ 
+     @make_prop_val_node("_old_transform_number")
+     def old_transform_number(self):
+diff --git a/montepy/universe.py b/montepy/universe.py
+index e4b7a2e..46c5f4d 100644
+--- a/montepy/universe.py
++++ b/montepy/universe.py
+@@ -1,4 +1,5 @@
+ # Copyright 2024, Battelle Energy Alliance, LLC All Rights Reserved.
++import numbers
+ import montepy
+ from montepy.cells import Cells
+ from montepy.input_parser.mcnp_input import Input
+@@ -18,10 +19,11 @@ class Universe(Numbered_MCNP_Object):
+ 
+     def __init__(self, number: int):
+         self._number = self._generate_default_node(int, -1)
+-        if not isinstance(number, int):
++        if not isinstance(number, numbers.Integral):
+             raise TypeError("number must be int")
+         if number < 0:
+             raise ValueError(f"Universe number must be ≥ 0. {number} given.")
++        number = int(number)
+         self._number = self._generate_default_node(int, number)
+ 
+         class Parser:
