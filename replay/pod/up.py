@@ -20,10 +20,25 @@ SHIPPED = (
     "replay/run.py",
     "replay/claude_code_compact_instruction.txt",
     "replay/pod/boot.sh",
+    "live/run.py",
+    "live/tasks.json",
     "catalog.json",
     "requirements.txt",
 )
 CHUNK = 4000
+LIVE_KEYS = (
+    "MODE",
+    "LIVE_MODEL",
+    "LIVE_TASKS",
+    "LIVE_CAP_USD",
+    "LIVE_HARD_USD",
+    "LIVE_SWITCH_USD",
+    "LIVE_MAX_TURNS",
+    "LIVE_SESSION_SECONDS",
+    "LIVE_COMPACT_WINDOW",
+    "LIVE_COMPACT_PCT",
+    "LIVE_SKIP",
+)
 START = (
     "mkdir -p /opt/pilot && "
     'for i in $(seq 0 $((PILOT_PARTS-1))); do v="PILOT_$i"; printf %s "${!v}"; done '
@@ -82,6 +97,7 @@ def main() -> int:
         "MICROTENSOR_API_KEY": os.environ["MICROTENSOR_API_KEY"],
         "VLLM_NO_USAGE_STATS": "1",
         **({"RERUN_IDS": os.environ["RERUN_IDS"]} if os.environ.get("RERUN_IDS") else {}),
+        **{k: os.environ[k] for k in LIVE_KEYS if os.environ.get(k)},
     }
     print("payload bytes", len(packed), "in", len(parts), "parts", file=sys.stderr)
     if len(sys.argv) > 1:

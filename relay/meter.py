@@ -14,6 +14,8 @@ class Meter:
         self.first_token: float | None = None
         self.input_tokens = 0
         self.cached_tokens = 0
+        self.written_tokens = 0
+        self.written_long_tokens = 0
         self.output_tokens = 0
         self.stream = False
         self.buffer = b""
@@ -69,11 +71,13 @@ class Meter:
     def _anthropic_usage(self, usage: dict[str, Any]) -> None:
         if "input_tokens" in usage:
             self.input_tokens = int(usage.get("input_tokens") or 0)
-        cached = int(usage.get("cache_read_input_tokens") or 0) + int(
-            usage.get("cache_creation_input_tokens") or 0
-        )
+        written = int(usage.get("cache_creation_input_tokens") or 0)
+        cached = int(usage.get("cache_read_input_tokens") or 0) + written
         if cached:
             self.cached_tokens = cached
+            self.written_tokens = written
+            split = usage.get("cache_creation") or {}
+            self.written_long_tokens = min(written, int(split.get("ephemeral_1h_input_tokens") or 0))
         if "output_tokens" in usage:
             self.output_tokens = int(usage.get("output_tokens") or 0)
 

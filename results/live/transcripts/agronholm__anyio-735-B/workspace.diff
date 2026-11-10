@@ -1,0 +1,69 @@
+diff --git a/src/anyio/streams/memory.py b/src/anyio/streams/memory.py
+index 8fd94f4..922f374 100644
+--- a/src/anyio/streams/memory.py
++++ b/src/anyio/streams/memory.py
+@@ -11,6 +11,7 @@ from .. import (
+     ClosedResourceError,
+     EndOfStream,
+     WouldBlock,
++    get_cancelled_exc_class,
+ )
+ from ..abc import Event, ObjectReceiveStream, ObjectSendStream
+ from ..lowlevel import checkpoint
+@@ -104,6 +105,13 @@ class MemoryObjectReceiveStream(Generic[T_co], ObjectReceiveStream[T_co]):
+ 
+             try:
+                 await receive_event.wait()
++            except get_cancelled_exc_class():
++                # Return any item that was already handed to us to the front of the
++                # buffer so that it is not lost
++                if container:
++                    self._state.buffer.appendleft(container.pop())
++
++                raise
+             finally:
+                 self._state.waiting_receivers.pop(receive_event, None)
+ 
+diff --git a/tests/streams/test_memory.py b/tests/streams/test_memory.py
+index 53d87c6..f3b1799 100644
+--- a/tests/streams/test_memory.py
++++ b/tests/streams/test_memory.py
+@@ -17,7 +17,7 @@ from anyio import (
+     fail_after,
+     wait_all_tasks_blocked,
+ )
+-from anyio.abc import ObjectReceiveStream, ObjectSendStream
++from anyio.abc import ObjectReceiveStream, ObjectSendStream, TaskStatus
+ from anyio.streams.memory import MemoryObjectReceiveStream, MemoryObjectSendStream
+ 
+ if sys.version_info < (3, 11):
+@@ -329,6 +329,29 @@ async def test_cancel_during_receive() -> None:
+     receive.close()
+ 
+ 
++async def test_receive_send_when_cancelled() -> None:
++    """
++    Test that sending an item to a cancelled receiver does not cause the item to be
++    lost.
++
++    """
++
++    async def receiver(task_status: TaskStatus[CancelScope]) -> None:
++        with CancelScope() as cancel_scope:
++            task_status.started(cancel_scope)
++            await receive.receive()
++
++    send, receive = create_memory_object_stream[str](1)
++    with send, receive:
++        async with create_task_group() as tg:
++            cancel_scope = await tg.start(receiver)
++            await wait_all_tasks_blocked()
++            cancel_scope.cancel()
++            send.send_nowait("item")
++
++        assert receive.receive_nowait() == "item"
++
++
+ async def test_close_receive_after_send() -> None:
+     async def send() -> None:
+         async with send_stream:

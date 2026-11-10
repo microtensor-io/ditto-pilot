@@ -1,0 +1,70 @@
+{
+ "type": "result",
+ "subtype": "success",
+ "is_error": false,
+ "api_error_status": null,
+ "duration_ms": 134573,
+ "duration_api_ms": 64440,
+ "ttft_ms": 3112,
+ "num_turns": 22,
+ "result": "I fixed the dropped item. A receiver that is cancelled after an item was handed to it now puts that item back at the front of the stream's buffer and re-raises the cancellation. The change is in `MemoryObjectReceiveStream.receive()` in `src/anyio/streams/memory.py`.\n\nI added a regression test, `test_receive_send_when_cancelled`, to `tests/streams/test_memory.py`. It is the issue's reproduction and passes on asyncio, uvloop and trio. The existing `test_cancel_during_receive` still passes.\n\nOne test in the files I ran, `tests/test_taskgroups.py::test_task_group_in_generator[trio]`, still fails with a RuntimeError. It exercises an async generator, not memory streams, and I believe it fails without my change too. I couldn't confirm that, because a `git stash` comparison run was blocked.",
+ "stop_reason": "end_turn",
+ "session_id": "3227e441-0660-4680-8c5a-0faa21b72bf9",
+ "total_cost_usd": 0.722121,
+ "usage": {
+  "input_tokens": 1743,
+  "cache_creation_input_tokens": 24128,
+  "cache_read_input_tokens": 821212,
+  "output_tokens": 6080,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 24128
+  },
+  "inference_geo": "global",
+  "iterations": [],
+  "speed": "standard"
+ },
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 1743,
+   "outputTokens": 6080,
+   "cacheReadInputTokens": 821212,
+   "cacheCreationInputTokens": 24128,
+   "webSearchRequests": 0,
+   "costUSD": 0.722121,
+   "contextWindow": 200000,
+   "maxOutputTokens": 32000
+  }
+ },
+ "permission_denials": [
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01EZHmc6PWQWr7Wo9MfmVg9t",
+   "tool_input": {
+    "command": "python - <<'EOF'\nimport re\np='src/anyio/streams/memory.py'\ns=open(p).read()\ns=s.replace(\"from .. import get_cancelled_exc_class\\n\",\"\")\ns=s.replace(\"    WouldBlock,\\n)\",\"    WouldBlock,\\n    get_cancelled_exc_class,\\n)\",1)\nopen(p,'w').write(s)\nEOF\ncat > /tmp/t.py <<'EOF'\nimport pytest\nfrom anyio import *\npytestmark = pytest.mark.anyio\nasync def receiver(receive, task_status):\n    with CancelScope() as cs:\n        task_status.started(cs)\n        await receive.receive()\n\nasync def test_x():\n    send, receive = create_memory_object_stream(1)\n    with send, receive:\n        async with create_task_group() as tg:\n            cs = await tg.start(receiver, receive)\n            await wait_all_tasks_blocked()\n            cs.cancel()\n            send.send_nowait(\"item\")\n        assert receive.receive_nowait() == \"item\"\nEOF\npython -m pytest /tmp/t.py tests/streams/test_memory.py tests/test_taskgroups.py -q -p anyio 2>&1 | tail -8"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_0129NYgMtmWUDofzMnk9hSvK",
+   "tool_input": {
+    "command": "python -m pytest tests/streams tests/test_taskgroups.py tests/test_synchronization.py -q 2>&1 | grep -E \"^(FAILED|ERROR)\"; git stash -q; python -m pytest tests/streams tests/test_taskgroups.py tests/test_synchronization.py -q 2>&1 | tail -1; git stash pop"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01XJ5LwBigD6y1pUEGoPQUQe",
+   "tool_input": {
+    "command": "git stash -q && python -m pytest tests/test_taskgroups.py -q -k test_task_group_in_generator 2>&1 | tail -1; git stash pop -q && git status --short"
+   }
+  }
+ ],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "uuid": "6d00e25c-930c-42f4-b7f4-855ecda84538"
+}

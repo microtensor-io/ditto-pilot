@@ -1,0 +1,11 @@
+task_id,arm,router,model,result,compactions,compaction_requests,cost_per_compaction_usd,total_cost_usd,total_time_s,turns,counted,errors_or_fallbacks
+narwhals-dev__narwhals-1257,A,router off,claude-sonnet-5-5,passed,2,2,0.061849,0.977,216.8,65,yes,no fallback (fallbacks are off)
+narwhals-dev__narwhals-1257,B,router on,claude-sonnet-5-5,passed,4,4,0.005,1.1041,228.1,84,yes,no fallback (fallbacks are off)
+zarr-developers__zarr-python-1968,A,router off,claude-sonnet-5-5,failed,0,0,,0.2324,50.5,16,"no, did not compact in both arms",no fallback (fallbacks are off)
+zarr-developers__zarr-python-1968,B,router on,claude-sonnet-5-5,failed,1,1,0.005,0.4819,86.1,29,"no, did not compact in both arms",no fallback (fallbacks are off)
+RDFLib__rdflib-2221,A,router off,claude-sonnet-5-5,passed,1,1,0.04816,0.5682,118.1,32,yes,no fallback (fallbacks are off)
+RDFLib__rdflib-2221,B,router on,claude-sonnet-5-5,passed,1,1,0.005,0.6941,145.8,42,yes,no fallback (fallbacks are off)
+agronholm__anyio-735,A,router off,claude-sonnet-5-5,failed,0,0,,0.1918,60.7,12,"no, did not compact in both arms",no fallback (fallbacks are off)
+agronholm__anyio-735,B,router on,claude-sonnet-5-5,passed,0,0,,0.2888,134.9,22,"no, did not compact in both arms",no fallback (fallbacks are off)
+idaholab__MontePy-680,A,router off,claude-sonnet-5-5,failed,8,8,0.07804,2.2982,352.7,138,yes,no fallback (fallbacks are off)
+idaholab__MontePy-680,B,router on,claude-sonnet-5-5,passed,5,5,0.005,1.4908,280.9,127,yes,no fallback (fallbacks are off)

@@ -31,7 +31,12 @@ if ! command -v cc > /dev/null 2>&1; then
   apt-get install -y build-essential >> /work/apt.log 2>&1
   tail -3 /work/apt.log
 fi
-echo "cc $(command -v cc)"
+if [ "${MODE:-replay}" = "live" ] && ! command -v git > /dev/null 2>&1; then
+  apt-get update > /work/apt-git.log 2>&1
+  apt-get install -y git >> /work/apt-git.log 2>&1
+  tail -1 /work/apt-git.log
+fi
+echo "cc $(command -v cc) git $(command -v git)"
 curl -fsSL https://sh.rustup.rs -o /tmp/rustup.sh && sh /tmp/rustup.sh -y --profile minimal > /dev/null 2>&1
 . "$HOME/.cargo/env"
 mkdir -p /opt/ditto-subnet
@@ -50,6 +55,15 @@ sleep 5
 for port in 8081 8082 8090 8100; do
   printf 'port %s: ' "$port"; curl -s -o /dev/null -w '%{http_code}\n' "http://127.0.0.1:${port}/$( [ "$port" = 8090 ] && echo relay/health || ([ "$port" = 8100 ] && echo v1/models || echo router/health))"
 done
+
+if [ "${MODE:-replay}" = "live" ]; then
+  echo "==> live run $(date -u +%T)"
+  cd /opt/pilot
+  python3 -m live.run > /work/live.log 2>&1
+  echo "==> done $(date -u +%FT%TZ) exit $?"
+  touch /work/DONE
+  sleep infinity
+fi
 
 echo "==> requests"
 curl -fsSL "https://raw.githubusercontent.com/microtensor-io/microtensor-comparisons/main/ctx_compress/exp1/data/items.jsonl" -o /work/items.jsonl

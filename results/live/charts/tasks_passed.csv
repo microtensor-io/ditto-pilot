@@ -1,0 +1,3 @@
+arm,tasks,passed
+"A: router off, all Claude",3,2
+"B: router on, compaction to Microtensor",3,3

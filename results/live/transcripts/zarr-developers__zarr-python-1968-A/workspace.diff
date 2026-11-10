@@ -1,0 +1,46 @@
+diff --git a/src/zarr/indexing.py b/src/zarr/indexing.py
+index 29b6dd7..1298a79 100644
+--- a/src/zarr/indexing.py
++++ b/src/zarr/indexing.py
+@@ -142,6 +142,9 @@ def is_pure_fancy_indexing(selection: Any, ndim: int) -> bool:
+         True if the selection is a pure fancy indexing expression (ie not mixed
+         with boolean or slices).
+     """
++    if is_bool_array(selection, ndim=ndim):
++        # mask selection
++        return True
+     if ndim == 1:
+         if is_integer_list(selection) or is_integer_array(selection):
+             return True
+@@ -166,18 +169,27 @@ def is_pure_orthogonal_indexing(selection: Selection, ndim: int) -> TypeGuard[Or
+     if not ndim:
+         return False
+ 
+-    # Case 1: Selection is a single iterable of integers
++    # Case 1: Selection is a single iterable of integers or booleans
+     if is_integer_list(selection) or is_integer_array(selection, ndim=1):
+         return True
++    if is_bool_array(selection, ndim=1):
++        return True
+ 
+-    # Case two: selection contains either zero or one integer iterables.
++    # Case two: selection contains either zero or one integer/boolean iterables.
+     # All other selection elements are slices or integers
+     return (
+         isinstance(selection, tuple)
+         and len(selection) == ndim
+-        and sum(is_integer_list(elem) or is_integer_array(elem) for elem in selection) <= 1
++        and sum(
++            is_integer_list(elem) or is_integer_array(elem) or is_bool_array(elem, ndim=1)
++            for elem in selection
++        )
++        <= 1
+         and all(
+-            is_integer_list(elem) or is_integer_array(elem) or isinstance(elem, int | slice)
++            is_integer_list(elem)
++            or is_integer_array(elem)
++            or is_bool_array(elem, ndim=1)
++            or isinstance(elem, int | slice)
+             for elem in selection
+         )
+     )

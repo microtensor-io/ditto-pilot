@@ -1,0 +1,84 @@
+{
+ "type": "result",
+ "subtype": "success",
+ "is_error": false,
+ "api_error_status": null,
+ "duration_ms": 145412,
+ "duration_api_ms": 91720,
+ "ttft_ms": 2123,
+ "num_turns": 42,
+ "result": "DESCRIBE queries now run instead of raising. The sparql/describe/cbd/query test subset has 1230 passed, 4 failed, and I also deselected `test_sparqleval`, which failed on its own in an earlier run. I could not run my DESCRIBE check script because the sandbox blocked `python /tmp/describe_check.py` for approval. So the two queries from the report have not been run directly on the new code.\n\n- **`test_service.py` (4 failures):** these tests send a `SERVICE` query to the live `http://DBpedia.org/sparql` endpoint and get zero rows back. The sandbox looks like it has no network. I couldn't compare against the unmodified code, because the sandbox also blocked the `git stash` command, so I haven't proven they are unrelated to my changes.\n- **`test_sparqleval` (deselected):** it runs `pip install` with `--no-index`, which fails offline.\n\nTo check DESCRIBE yourself, run `python /tmp/describe_check.py`. It covers a bare `DESCRIBE <iri>`, `DESCRIBE ?s WHERE {...}`, `DESCRIBE *`, and a mix of IRI and variable.\n\nI edited `rdflib/graph.py`, `rdflib/plugins/sparql/algebra.py` and `rdflib/plugins/sparql/evaluate.py`.",
+ "stop_reason": "end_turn",
+ "session_id": "1a5daf68-8b9f-4d92-bb47-62dcd185ab74",
+ "total_cost_usd": 1.3077572500000003,
+ "usage": {
+  "input_tokens": 2210,
+  "cache_creation_input_tokens": 41015,
+  "cache_read_input_tokens": 1402637,
+  "output_tokens": 10649,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 41015
+  },
+  "inference_geo": "global",
+  "iterations": [],
+  "speed": "standard"
+ },
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 12044,
+   "outputTokens": 11595,
+   "cacheReadInputTokens": 1402637,
+   "cacheCreationInputTokens": 41015,
+   "webSearchRequests": 0,
+   "costUSD": 1.3077572500000003,
+   "contextWindow": 200000,
+   "maxOutputTokens": 32000
+  }
+ },
+ "permission_denials": [
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_019Zr9qX6v2myoheTq56YEc1",
+   "tool_input": {
+    "command": "cat > /tmp/t.py <<'EOF'\nimport rdflib\nfrom rdflib import RDF, Namespace, BNode, Literal\nex = Namespace('http://www.example.org/')\ng = rdflib.Graph()\ng.add((ex.a, RDF.type, ex.Cl)); g.add((ex.b, ex.p, ex.a)); b=BNode(); g.add((ex.b, ex.q, b)); g.add((b, ex.r, Literal(1)))\ng.bind(\"ex\", ex)\nfor q in ['DESCRIBE <http://www.example.org/a>', 'DESCRIBE ex:a ex:b', 'DESCRIBE ?s WHERE {?s ?p ?o FILTER (?s = <http://www.example.org/a>)}',\n 'DESCRIBE ?s ex:b WHERE {?s a ex:Cl}', 'DESCRIBE * WHERE {?s a ex:Cl}', 'DESCRIBE ?s WHERE {?s ?p ?o} LIMIT 1', 'DESCRIBE ?s WHERE {?s ?p ?o} VALUES ?s {ex:a}']:\n    r = g.query(q); print(q, r.type, len(r.graph), sorted(r.graph)[:1])\nEOF\npython /tmp/t.py && python -m pytest test -q -x -k \"sparql or cbd or describe\" 2>&1 | tail -5"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01LkFW6AkLdHR5EZUWXVVDqo",
+   "tool_input": {
+    "command": "python /tmp/t.py"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01CcgdUKecDsj9epm4tSRUj2",
+   "tool_input": {
+    "command": "python /tmp/describe_check.py"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01FxQN7VLhFsEHexa4mWcgVv",
+   "tool_input": {
+    "command": "python /tmp/describe_check.py"
+   }
+  },
+  {
+   "tool_name": "Bash",
+   "tool_use_id": "toolu_01BwUjzH1Ucop3rpnaaERNKi",
+   "tool_input": {
+    "command": "git stash -q && python -m pytest test/test_sparql/test_service.py -q 2>&1 | tail -2; git stash pop -q && git status --short"
+   }
+  }
+ ],
+ "terminal_reason": "completed",
+ "fast_mode_state": "off",
+ "uuid": "a90d2e9c-cbb5-4ffc-84ba-442a03229a02"
+}

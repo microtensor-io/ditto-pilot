@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import Any
 
 PROVIDERS = ("anthropic", "microtensor", "openai_compat")
+WRITE_SHORT = 1.25
+WRITE_LONG = 2.0
 
 
 class CatalogError(ValueError):
@@ -33,19 +35,33 @@ class Route:
     price_long_out_micros_per_mtok: float = 0.0
     extra: dict[str, Any] = field(default_factory=dict)
 
-    def cost_micros(self, input_tokens: int, cached_tokens: int, output_tokens: int) -> int:
-        cached_price = (
-            self.price_in_micros_per_mtok
-            if self.price_cached_micros_per_mtok is None
-            else self.price_cached_micros_per_mtok
-        )
+    def cost_micros(
+        self,
+        input_tokens: int,
+        cached_tokens: int,
+        output_tokens: int,
+        written_tokens: int = 0,
+        written_long_tokens: int = 0,
+    ) -> int:
         prompt = input_tokens + cached_tokens
         long = bool(self.price_long_above_tokens) and prompt > self.price_long_above_tokens
         price_in = self.price_long_in_micros_per_mtok if long else self.price_in_micros_per_mtok
         price_out = self.price_long_out_micros_per_mtok if long else self.price_out_micros_per_mtok
+        cached_price = (
+            self.price_in_micros_per_mtok
+            if self.price_cached_micros_per_mtok is None
+            else self.price_cached_micros_per_mtok
+            * price_in
+            / (self.price_in_micros_per_mtok or price_in or 1)
+        )
+        written = min(written_tokens, cached_tokens)
+        written_long = min(written_long_tokens, written)
+        read = cached_tokens - written
         total = (
             input_tokens * price_in
-            + cached_tokens * cached_price
+            + read * cached_price
+            + (written - written_long) * price_in * WRITE_SHORT
+            + written_long * price_in * WRITE_LONG
             + output_tokens * price_out
         ) / 1_000_000 + self.price_per_request_micros
         return round(total)
