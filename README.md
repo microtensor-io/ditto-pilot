@@ -13,6 +13,18 @@ Nothing here needs Ditto's private backend. It builds against Ditto's public rou
 | A: router off, all Claude | 2 of 3 | $1.28 | 3.8 min | 11 |
 | B: router on, compaction to Microtensor | 3 of 3 | $1.10 | 3.6 min | 10 |
 
+Each task pair, one row per task (from `results/live/sessions.csv`):
+
+| Task | A: router off | A cost | A compactions | B: router on | B cost | B compactions | Counted |
+|---|---|---|---|---|---|---|---|
+| narwhals 1257 | passed | $0.98 | 2 | passed | $1.10 | 4 | yes |
+| rdflib 2221 | passed | $0.57 | 1 | passed | $0.69 | 1 | yes |
+| MontePy 680 | failed | $2.30 | 8 | passed | $1.49 | 5 | yes |
+| zarr-python 1968 | failed | $0.23 | 0 | failed | $0.48 | 1 | no, arm A did not compact |
+| anyio 735 | failed | $0.19 | 0 | passed | $0.29 | 0 | no, neither arm compacted |
+
+On two of the three counted pairs the router on session cost more than the router off session; the lower average for arm B comes from MontePy alone.
+
 ![Tasks passed per arm](results/live/charts/tasks_passed.png)
 
 ![Cost per task per arm](results/live/charts/cost_per_task.png)
@@ -35,7 +47,7 @@ What the compactions looked like (counted tasks, relay log):
 | Median summary length | 4,242 tokens | 867 tokens |
 | Cost per compaction | $0.05 to $0.08 | $0.005 |
 
-The gateway renders the session before the model sees it and keeps only the head and tail of long tool output, so the Microtensor model saw a median of 6,458 tokens against 67,769 for Sonnet. Its summaries are shorter, and on narwhals the router on session compacted more often (4 against 2) and took more turns (84 against 65). It still passed. Fallbacks were off and no request failed.
+**Note: Sonnet ran on longer input than our model.** The gateway renders the session before the model sees it and keeps only the head and tail of long tool output, so the Microtensor model saw a median of 6,458 tokens against 67,769 for Sonnet. The time and cost rows above compare the two on different amounts of input. Its summaries are shorter, and on narwhals the router on session compacted more often (4 against 2) and took more turns (84 against 65). It still passed. Fallbacks were off and no request failed.
 
 Three tasks is a small sample: this shows that sessions keep working with Microtensor compaction, not that one arm is better. Anthropic spend for the run was $9.87 at list price ($1.40 of it in the stopped first attempt).
 
@@ -64,13 +76,13 @@ Each of the 36 sessions from Woolford's compaction study replication package (MI
 | p95 time | 86.6 s | 69.8 s | 46.1 s |
 | Errors | 0 | 0 | 0 |
 
-| Titles | Claude Haiku 5.5 (default) | Claude Sonnet 5.5 (default) | Microtensor route table |
+| Titles | Claude Haiku 5.5 (default) | Claude Sonnet 5.5 (default) | Stand in title model (unpriced demo) |
 |---|---|---|---|
 | Answered | 36 | 36 | 36 |
 | Valid JSON title | 36 | 36 | 36 |
 | 3 to 7 words | 35 | 36 | 29 |
 | Median time | 0.6 s | 1.1 s | 44.3 s |
-| Cost per title | $0.0000 | $0.0006 | $0.0000 |
+| Cost per title | $0.0000 | $0.0006 | not priced |
 
 Normal turns through the route table: 3 of 3 answered, 3 served by the model they asked for, so the table left them alone.
 
@@ -109,7 +121,8 @@ Numbers: [session_scores.csv](results/charts/session_scores.csv)
 - Claude Haiku 5.5 used its 20,000 token limit on 17 of 36 compactions, mostly on thinking, and those summaries stop before the end. That is the request Claude Code sends; nothing was changed for Haiku.
 - The arena grader caps a summary at 3,072 tokens. Most of Haiku's summaries go over it (only 16 of 36, 44%, stay within it); Sonnet stays within it 86% of the time (31 of 36). The row "Score without the budget rule" compares the content on equal terms.
 - One session, `exp1-b-07f364d652`, has tool results that arrive a turn late, and Anthropic refused it as first built. The builder now moves each late call next to its result and closes a call left open with Claude Code's interrupted result. All three arms reran that session, and the outputs and relay log hold the rerun.
-- The title route is a stand in: Qwen2.5 1.5B on the pod's CPU, not a certified Microtensor model. Its 44 s is the CPU.
+- The title route is an unpriced demo: a stand in, Qwen2.5 1.5B on the pod's CPU, not a certified Microtensor model. It has no price, so its cost row says "not priced" and it is no cost result. Its 44 s is the CPU.
+- Compaction requests reach Microtensor through the same gateway route as in the live run, so the gateway trims long tool output here too and the Microtensor model read less input than Haiku and Sonnet did.
 - Anthropic cost of the run at list price, from the relay log: $14.38.
 - Raw data: `results/outputs/` (every reply), `results/relay.jsonl` (one line per request), `results/graded/` (every grade), `results/run/` (pod and rerun logs).
 
