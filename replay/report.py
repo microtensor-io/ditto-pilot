@@ -15,6 +15,8 @@ ARM_LABELS = {
     "sonnet": "Claude Sonnet 5.5 (default)",
     "microtensor": "Microtensor route table",
 }
+TITLE_LABELS = {**ARM_LABELS, "microtensor": "Stand in title model (unpriced demo)"}
+UNPRICED = {"microtensor"}
 TABLE_START = "<!-- results:start -->"
 TABLE_END = "<!-- results:end -->"
 TITLE_JSON = re.compile(r"\{.*\}", re.DOTALL)
@@ -165,13 +167,17 @@ def table(lines: list[dict[str, Any]], titles: list[dict[str, Any]], turns: dict
         out.append(f"| {label} | " + " | ".join(fmt(line.get(key), kind) for line in lines) + " |")
     title_rows = [
         "",
-        "| Titles | " + " | ".join(ARM_LABELS[t["arm"]] for t in titles) + " |",
+        "| Titles | " + " | ".join(TITLE_LABELS[t["arm"]] for t in titles) + " |",
         "|---|" + "---|" * len(titles),
         "| Answered | " + " | ".join(str(t["answered"]) for t in titles) + " |",
         "| Valid JSON title | " + " | ".join(str(t["valid_json_title"]) for t in titles) + " |",
         "| 3 to 7 words | " + " | ".join(str(t["three_to_seven_words"]) for t in titles) + " |",
         "| Median time | " + " | ".join(fmt(t["median_time_s"], "s") for t in titles) + " |",
-        "| Cost per title | " + " | ".join(fmt(t["cost_per_title_usd"], "usd") for t in titles) + " |",
+        "| Cost per title | "
+        + " | ".join(
+            "not priced" if t["arm"] in UNPRICED else fmt(t["cost_per_title_usd"], "usd") for t in titles
+        )
+        + " |",
     ]
     turn_rows = [
         "",
